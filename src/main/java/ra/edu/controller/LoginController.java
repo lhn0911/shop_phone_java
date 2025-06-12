@@ -44,29 +44,6 @@ public class LoginController {
             return "login";
         }
     }
-    @GetMapping("/register")
-    public String showRegisterForm(@ModelAttribute("adminDTO") AdminDTO adminDTO) {
-        return "register";
-    }
-    @PostMapping("/register")
-    public String handleRegister(
-            @Valid @ModelAttribute("adminDTO") AdminDTO adminDTO,
-            BindingResult result,
-            RedirectAttributes redirectAttributes) {
-
-        if (result.hasErrors()) {
-            return "register";
-        }
-
-        Admin admin = adminService.register(adminDTO.getUsername(), adminDTO.getPassword());
-        if (admin != null) {
-            redirectAttributes.addFlashAttribute("message", "Đăng ký thành công");
-            return "redirect:/login";
-        } else {
-            result.rejectValue("username", "invalid", "Tên đăng nhập đã tồn tại");
-            return "register";
-        }
-    }
     @GetMapping("/logout")
     public String logout(HttpSession session) {
         session.invalidate();

@@ -17,5 +17,7 @@
         <!-- declare entity -->
 
         <mapping class="ra.edu.entity.Admin" />
+        <mapping class="ra.edu.entity.Product" />
+
     </session-factory>
 </hibernate-configuration>

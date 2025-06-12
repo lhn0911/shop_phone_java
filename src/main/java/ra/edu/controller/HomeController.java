@@ -1,28 +1,32 @@
 package ra.edu.controller;
 
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 
 @Controller
 public class HomeController {
+
     @GetMapping("/")
-    public String home() {
-        return "home";
+    public String home(Model model) {
+        model.addAttribute("page", "dashboard");
+        return "layout";
     }
-    @GetMapping("/users")
-    public String user() {
-        return "users";
+
+    @GetMapping("/user")
+    public String user(Model model) {
+        model.addAttribute("page", "user");
+        return "layout";
     }
-    @GetMapping("/products")
-    public String product() {
-        return "products";
+
+    @GetMapping("/product")
+    public String product(Model model) {
+        model.addAttribute("page", "product");
+        return "layout";
     }
-    @GetMapping("/dashboard")
-    public String order() {
-        return "dashboard";
-    }
-    @GetMapping("/invoices")
-    public String category() {
-        return "invoices";
+    @GetMapping("/invoice")
+    public String invoice(Model model) {
+        model.addAttribute("page", "invoice");
+        return "layout";
     }
 }

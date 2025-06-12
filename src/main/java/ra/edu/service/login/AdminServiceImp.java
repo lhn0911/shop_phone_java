@@ -18,11 +18,4 @@ public class AdminServiceImp implements AdminService{
         return adminDao.login(username, password);
     }
 
-    @Override
-    public Admin register(String username, String password) {
-        if (username == null || password == null || username.isEmpty() || password.isEmpty()) {
-            return null;
-        }
-        return adminDao.register(username, password);
-    }
 }

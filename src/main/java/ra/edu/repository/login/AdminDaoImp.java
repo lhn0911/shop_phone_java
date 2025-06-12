@@ -31,29 +31,4 @@ public class AdminDaoImp implements AdminDao {
             }
         }
     }
-
-    @Override
-    public Admin register(String username, String password) {
-        Session session = null;
-        try {
-            session = sessionFactory.openSession();
-            session.beginTransaction();
-            Admin admin = new Admin();
-            admin.setUsername(username);
-            admin.setPassword(password);
-            session.save(admin);
-            session.getTransaction().commit();
-            return admin;
-        } catch (Exception e) {
-            if (session != null && session.getTransaction().isActive()) {
-                session.getTransaction().rollback();
-            }
-            e.printStackTrace();
-            return null;
-        } finally {
-            if (session != null) {
-                session.close();
-            }
-        }
-    }
 }

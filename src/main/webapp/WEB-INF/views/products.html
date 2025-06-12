@@ -1,305 +1,162 @@
-    <!DOCTYPE html>
-    <html lang="en">
-    <head>
-        <meta charset="UTF-8">
-        <title>Title</title>
-        <style>
-            .main-content {
-                flex: 1;
-                margin-left: 250px;
-                padding: 24px;
-                background: #f8fafc;
-                min-height: 100vh;
-            }
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>Danh sách sản phẩm</title>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+</head>
+<body class="bg-gray-100 p-6">
 
-            .page-header {
-                margin-bottom: 24px;
-            }
+<div class="max-w-6xl mx-auto bg-white p-6 rounded shadow-md">
 
-            .page-title {
-                font-size: 24px;
-                font-weight: 700;
-                color: #1e293b;
-                margin-bottom: 4px;
-            }
-
-            .page-subtitle {
-                color: #64748b;
-                font-size: 14px;
-            }
-
-            /* Stats Cards */
-            .stats-grid {
-                display: grid;
-                grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-                gap: 20px;
-                margin-bottom: 32px;
-            }
-
-            .stat-card {
-                background: white;
-                padding: 24px;
-                border-radius: 12px;
-                border: 1px solid #e2e8f0;
-                box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-                transition: all 0.2s ease;
-            }
-
-            .stat-card:hover {
-                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-            }
-
-            .stat-header {
-                display: flex;
-                justify-content: center;
-                align-items: center;
-                margin-bottom: 16px;
-            }
-
-            .stat-title {
-                font-size: 12px;
-                font-weight: 500;
-                color: #64748b;
-                text-transform: uppercase;
-                letter-spacing: 0.5px;
-            }
-
-            .stat-trend {
-                font-size: 12px;
-                font-weight: 500;
-                display: flex;
-                align-items: center;
-                gap: 4px;
-            }
-
-            .stat-trend.positive {
-                color: #10b981;
-            }
-
-            .stat-trend.negative {
-                color: #ef4444;
-            }
-
-            .stat-value {
-                font-size: 32px;
-                font-weight: 700;
-                color: #1e293b;
-                margin-bottom: 4px;
-            }
-
-            .stat-label {
-                font-size: 14px;
-                color: #64748b;
-            }
-
-            /* Charts and Content */
-            .content-grid {
-                display: grid;
-                grid-template-columns: 2fr 1fr;
-                gap: 24px;
-                margin-bottom: 24px;
-            }
-
-            .card {
-                background: white;
-                border-radius: 12px;
-                border: 1px solid #e2e8f0;
-                box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-                overflow: hidden;
-            }
-
-            .card-header {
-                padding: 20px 24px;
-                border-bottom: 1px solid #e2e8f0;
-                display: flex;
-                justify-content: space-between;
-                align-items: center;
-            }
-
-            .card-title {
-                font-size: 16px;
-                font-weight: 600;
-                color: #1e293b;
-            }
-
-            .card-content {
-                padding: 24px;
-            }
-
-            .chart-container {
-                height: 300px;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                background: linear-gradient(135deg, #f8fafc, #e2e8f0);
-                border-radius: 8px;
-                color: #64748b;
-                font-style: italic;
-            }
-
-            /* Transaction List */
-            .transaction-item {
-                display: flex;
-                align-items: center;
-                padding: 16px 0;
-                border-bottom: 1px solid #f1f5f9;
-            }
-
-            .transaction-item:last-child {
-                border-bottom: none;
-            }
-
-            .transaction-status {
-                width: 8px;
-                height: 8px;
-                border-radius: 50%;
-                margin-right: 12px;
-            }
-
-            .transaction-status.completed {
-                background: #10b981;
-            }
-
-            .transaction-status.pending {
-                background: #f59e0b;
-            }
-
-            .transaction-status.cancelled {
-                background: #ef4444;
-            }
-
-            .transaction-info {
-                flex: 1;
-            }
-
-            .transaction-title {
-                font-size: 14px;
-                font-weight: 500;
-                color: #1e293b;
-                margin-bottom: 2px;
-            }
-
-            .transaction-meta {
-                font-size: 12px;
-                color: #64748b;
-            }
-
-            .transaction-amount {
-                font-size: 14px;
-                font-weight: 600;
-                color: #1e293b;
-            }
-
-            /* Recent Customers */
-            .customer-item {
-                display: flex;
-                align-items: center;
-                padding: 12px 0;
-                border-bottom: 1px solid #f1f5f9;
-            }
-
-            .customer-item:last-child {
-                border-bottom: none;
-            }
-
-            .customer-avatar {
-                width: 36px;
-                height: 36px;
-                border-radius: 50%;
-                margin-right: 12px;
-                object-fit: cover;
-            }
-
-            .customer-info {
-                flex: 1;
-            }
-
-            .customer-name {
-                font-size: 14px;
-                font-weight: 500;
-                color: #1e293b;
-                margin-bottom: 2px;
-            }
-
-            .customer-email {
-                font-size: 12px;
-                color: #64748b;
-            }
-
-            .customer-amount {
-                font-size: 14px;
-                font-weight: 600;
-                color: #1e293b;
-            }
-
-            /* Hide pages initially */
-            .page-content {
-                display: none;
-            }
-
-            .page-content.active {
-                display: block;
-            }
-
-            /* Responsive */
-            @media (max-width: 768px) {
-                .sidebar {
-                    transform: translateX(-100%);
-                    transition: transform 0.3s ease;
-                }
-
-                .sidebar.open {
-                    transform: translateX(0);
-                }
-
-                .main-content {
-                    margin-left: 0;
-                }
-
-                .content-grid {
-                    grid-template-columns: 1fr;
-                }
-
-                .stats-grid {
-                    grid-template-columns: 1fr;
-                }
-            }
-        </style>
-    </head>
-    <body>
-    <div id="productsPage" class="page-content">
-        <div class="page-header">
-            <h1 class="page-title">Product Management</h1>
-            <p class="page-subtitle">Quản lý sản phẩm, danh mục và kho hàng</p>
-        </div>
-
-        <div class="stats-grid">
-            <div class="stat-card">
-                <div class="stat-title">Tổng Sản Phẩm</div>
-                <div class="stat-value">1,500</div>
-                <div class="stat-label">Trong kho</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-title">Danh Mục</div>
-                <div class="stat-value">34</div>
-                <div class="stat-label">Categories</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-title">Hết Hàng</div>
-                <div class="stat-value">12</div>
-                <div class="stat-label">Cần nhập thêm</div>
-            </div>
-        </div>
-
-        <div class="card">
-            <div class="card-header">
-                <h3 class="card-title">Danh sách Sản phẩm</h3>
-                <button class="btn btn-primary">+ Thêm Sản phẩm</button>
-            </div>
-            <div class="card-content">
-                <p>Tính năng quản lý sản phẩm sẽ được phát triển tại đây...</p>
-            </div>
-        </div>
+  <!-- Hiển thị danh sách sản phẩm -->
+  <div th:if="${page == 'product'}">
+    <!-- Header -->
+    <div class="flex justify-between items-center mb-6">
+      <h1 class="text-2xl font-bold text-gray-800">📱 Danh sách sản phẩm</h1>
+      <a th:href="@{/products/add}" class="bg-orange-500 text-white px-4 py-2 rounded hover:bg-orange-600">
+        ➕ Thêm sản phẩm
+      </a>
     </div>
-    </body>
-    </html>
+
+    <!-- Search -->
+    <div class="mb-4">
+      <input type="text" placeholder="🔍 Tìm kiếm sản phẩm..."
+             class="w-1/3 px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-orange-300">
+    </div>
+
+    <!-- Product Table -->
+    <table class="w-full bg-white border border-gray-200 rounded shadow-sm">
+      <thead class="bg-gray-100 text-sm font-medium text-gray-700">
+      <tr>
+        <th class="py-3 px-4 border-b">STT</th>
+        <th class="py-3 px-4 border-b">Tên sản phẩm</th>
+        <th class="py-3 px-4 border-b">Thương hiệu</th>
+        <th class="py-3 px-4 border-b text-right">Giá</th>
+        <th class="py-3 px-4 border-b text-center">Tồn kho</th>
+        <th class="py-3 px-4 border-b text-center">Thao tác</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr th:each="product, iterStat : ${products}" class="text-sm hover:bg-gray-50">
+        <td class="py-2 px-4 border-b" th:text="${(currentPage - 1) * 5 + iterStat.index + 1}">1</td>
+        <td class="py-2 px-4 border-b" th:text="${product.name}">iPhone 15</td>
+        <td class="py-2 px-4 border-b" th:text="${product.brand}">Apple</td>
+        <td class="py-2 px-4 border-b text-right"
+            th:text="${#numbers.formatDecimal(product.price, 0, 'COMMA', 2, 'POINT')} + ' đ'">20,000,000 đ</td>
+        <td class="py-2 px-4 border-b text-center" th:text="${product.stock}">10</td>
+        <td class="py-2 px-4 border-b text-center">
+          <a th:href="@{'/products/edit/' + ${product.id}}" class="text-blue-500 hover:underline mr-2">✏️ Sửa</a>
+          <a th:href="@{'/products/delete/' + ${product.id}}" class="text-red-500 hover:underline">🗑️ Xóa</a>
+        </td>
+      </tr>
+      </tbody>
+    </table>
+
+    <!-- Pagination -->
+    <div class="mt-6 flex justify-center space-x-1">
+      <a th:if="${currentPage > 1}" th:href="@{'/products?page=' + (${currentPage - 1})}"
+         class="px-3 py-1 border rounded hover:bg-gray-200 text-gray-600">&laquo;</a>
+
+      <a th:each="i : ${#numbers.sequence(1, totalPages)}"
+         th:href="@{'/products?page=' + ${i}}"
+         th:text="${i}"
+         th:class="${i == currentPage} ? 'px-3 py-1 border rounded bg-orange-500 text-white' : 'px-3 py-1 border rounded bg-white text-gray-700 hover:bg-gray-200'">
+      </a>
+
+      <a th:if="${currentPage < totalPages}" th:href="@{'/products?page=' + (${currentPage + 1})}"
+         class="px-3 py-1 border rounded hover:bg-gray-200 text-gray-600">&raquo;</a>
+    </div>
+  </div>
+
+  <!-- Form Thêm sản phẩm -->
+  <div th:if="${page == 'addProduct'}">
+    <h2 class="text-xl font-semibold mb-4">➕ Thêm sản phẩm mới</h2>
+
+    <form th:action="@{/products/add}" method="post" th:object="${productDTO}" class="space-y-4">
+      <div>
+        <label class="block mb-1">Tên sản phẩm</label>
+        <input th:field="*{name}" type="text" required class="w-full border px-3 py-2 rounded" placeholder="Nhập tên sản phẩm">
+        <div th:if="${#fields.hasErrors('name')}" class="text-red-500 text-sm" th:errors="*{name}"></div>
+      </div>
+
+      <div>
+        <label class="block mb-1">Thương hiệu</label>
+        <input th:field="*{brand}" type="text" required class="w-full border px-3 py-2 rounded" placeholder="Nhập thương hiệu">
+        <div th:if="${#fields.hasErrors('brand')}" class="text-red-500 text-sm" th:errors="*{brand}"></div>
+      </div>
+
+      <div>
+        <label class="block mb-1">Giá</label>
+        <input th:field="*{price}" type="number" required class="w-full border px-3 py-2 rounded" placeholder="Nhập giá sản phẩm">
+        <div th:if="${#fields.hasErrors('price')}" class="text-red-500 text-sm" th:errors="*{price}"></div>
+      </div>
+
+      <div>
+        <label class="block mb-1">Tồn kho</label>
+        <input th:field="*{stock}" type="number" required class="w-full border px-3 py-2 rounded" placeholder="Nhập số lượng tồn">
+        <div th:if="${#fields.hasErrors('stock')}" class="text-red-500 text-sm" th:errors="*{stock}"></div>
+      </div>
+
+      <div>
+        <label class="block mb-1">URL hình ảnh</label>
+        <input th:field="*{image}" type="text" required class="w-full border px-3 py-2 rounded" placeholder="Nhập link ảnh (URL)">
+        <div th:if="${#fields.hasErrors('image')}" class="text-red-500 text-sm" th:errors="*{image}"></div>
+      </div>
+
+      <div class="flex justify-end space-x-2">
+        <a th:href="@{/products}" class="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400">Hủy</a>
+        <button type="submit" class="px-4 py-2 bg-orange-500 text-white rounded hover:bg-orange-600">Lưu</button>
+      </div>
+    </form>
+  </div>
+
+  <!-- Form Sửa sản phẩm -->
+  <div th:if="${page == 'editProduct'}">
+    <h2 class="text-xl font-semibold mb-4">✏️ Cập nhật sản phẩm</h2>
+
+    <form th:action="@{/products/edit}" method="post" th:object="${productDTO}" class="space-y-4">
+      <input type="hidden" th:field="*{id}"/>
+
+      <div>
+        <label class="block mb-1">Tên sản phẩm</label>
+        <input th:field="*{name}" type="text" required class="w-full border px-3 py-2 rounded" placeholder="Nhập tên sản phẩm">
+        <div th:if="${#fields.hasErrors('name')}" class="text-red-500 text-sm" th:errors="*{name}"></div>
+      </div>
+
+      <div>
+        <label class="block mb-1">Thương hiệu</label>
+        <input th:field="*{brand}" type="text" required class="w-full border px-3 py-2 rounded" placeholder="Nhập thương hiệu">
+        <div th:if="${#fields.hasErrors('brand')}" class="text-red-500 text-sm" th:errors="*{brand}"></div>
+      </div>
+
+      <div>
+        <label class="block mb-1">Giá</label>
+        <input th:field="*{price}" type="number" required class="w-full border px-3 py-2 rounded" placeholder="Nhập giá sản phẩm">
+        <div th:if="${#fields.hasErrors('price')}" class="text-red-500 text-sm" th:errors="*{price}"></div>
+      </div>
+
+      <div>
+        <label class="block mb-1">Tồn kho</label>
+        <input th:field="*{stock}" type="number" required class="w-full border px-3 py-2 rounded" placeholder="Nhập số lượng tồn">
+        <div th:if="${#fields.hasErrors('stock')}" class="text-red-500 text-sm" th:errors="*{stock}"></div>
+      </div>
+
+      <div>
+        <label class="block mb-1">URL hình ảnh</label>
+        <input th:field="*{image}" type="text" required class="w-full border px-3 py-2 rounded" placeholder="Nhập link ảnh (URL)">
+        <div th:if="${#fields.hasErrors('image')}" class="text-red-500 text-sm" th:errors="*{image}"></div>
+      </div>
+
+      <div class="flex justify-end space-x-2">
+        <a th:href="@{/products}" class="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400">Hủy</a>
+        <button type="submit" class="px-4 py-2 bg-orange-500 text-white rounded hover:bg-orange-600">Cập nhật</button>
+      </div>
+    </form>
+  </div>
+
+
+</div>
+
+</body>
+</html>
