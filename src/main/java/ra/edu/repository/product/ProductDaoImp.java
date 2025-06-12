@@ -52,20 +52,18 @@ public class ProductDaoImp implements ProductDao{
     }
 
     @Override
-    public Product save(Product product) {
+    public void save(Product product) {
         Session session = null;
         try {
             session = sessionFactory.openSession();
             session.beginTransaction();
             session.save(product);
             session.getTransaction().commit();
-            return product;
         } catch (Exception e) {
             if (session != null && session.getTransaction().isActive()) {
                 session.getTransaction().rollback();
             }
             e.printStackTrace();
-            return null;
         } finally {
             if (session != null) {
                 session.close();
@@ -74,20 +72,18 @@ public class ProductDaoImp implements ProductDao{
     }
 
     @Override
-    public Product update(Product product) {
+    public void update(Product product) {
         Session session = null;
         try {
             session = sessionFactory.openSession();
             session.beginTransaction();
             session.update(product);
             session.getTransaction().commit();
-            return product;
         } catch (Exception e) {
             if (session != null && session.getTransaction().isActive()) {
                 session.getTransaction().rollback();
             }
             e.printStackTrace();
-            return null;
         } finally {
             if (session != null) {
                 session.close();

@@ -7,8 +7,8 @@ import java.util.List;
 public interface ProductDao {
     List<Product> find_all(int pageNumber, int pageSize);
     Product find_by_id(int id);
-    Product save(Product product);
-    Product update(Product product);
+    void save(Product product);
+    void update(Product product);
     void delete(int id);
     List<Product> find_by_name(String name);
     List<Product> find_by_brand(String brand);

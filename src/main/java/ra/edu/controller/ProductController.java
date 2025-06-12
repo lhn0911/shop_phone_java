@@ -23,7 +23,7 @@ public class ProductController {
     public String listProducts(@RequestParam(defaultValue = "1") int page,
                                @RequestParam(defaultValue = "5") int size,
                                Model model) {
-        List<Product> products = productService.findAll(page, size);
+        List<Product> products = productService.find_all(page, size);
         long totalItems = productService.count();
         int totalPages = (int) Math.ceil((double) totalItems / size);
 
@@ -48,7 +48,7 @@ public class ProductController {
                              @RequestParam(defaultValue = "1") int page,
                              @RequestParam(defaultValue = "5") int size) {
         if (result.hasErrors()) {
-            List<Product> products = productService.findAll(page, size);
+            List<Product> products = productService.find_all(page, size);
             long totalItems = productService.count();
             int totalPages = (int) Math.ceil((double) totalItems / size);
 
@@ -64,13 +64,14 @@ public class ProductController {
         product.setBrand(productDTO.getBrand());
         product.setPrice(productDTO.getPrice());
         product.setStock(productDTO.getStock());
+        product.setImage(productDTO.getImage());
         productService.save(product);
         return "redirect:/products";
     }
 
     @GetMapping("/edit/{id}")
     public String showEditProductForm(@PathVariable("id") int id, Model model) {
-        Product product = productService.findById(id);
+        Product product = productService.find_by_id(id);
         if (product == null) {
             return "redirect:/products";
         }
@@ -93,7 +94,7 @@ public class ProductController {
             model.addAttribute("page", "editProduct");
             return "layout";
         }
-        Product product = productService.findById(productDTO.getId());
+        Product product = productService.find_by_id(productDTO.getId());
         if (product == null) {
             return "redirect:/products";
         }
