@@ -131,7 +131,7 @@ public class ProductDaoImp implements ProductDao{
     }
 
     @Override
-    public List<Product> find_by_brand(String brand) {
+    public List<Product> find_by_brand(String brand, int page, int size) {
         Session session = null;
         List<Product> productList = new ArrayList<>();
         try {
@@ -198,6 +198,24 @@ public class ProductDaoImp implements ProductDao{
         try {
             session = sessionFactory.openSession();
             Query<Long> query = session.createQuery("SELECT COUNT(p) FROM Product p", Long.class);
+            return query.uniqueResult();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return 0;
+        } finally {
+            if (session != null) {
+                session.close();
+            }
+        }
+    }
+
+    @Override
+    public long count_by_brand(String brand) {
+    Session session = null;
+        try {
+            session = sessionFactory.openSession();
+            Query<Long> query = session.createQuery("SELECT COUNT(p) FROM Product p WHERE p.brand LIKE :brand", Long.class);
+            query.setParameter("brand", "%" + brand + "%");
             return query.uniqueResult();
         } catch (Exception e) {
             e.printStackTrace();

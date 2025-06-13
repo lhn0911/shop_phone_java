@@ -13,16 +13,16 @@
     <h2 class="text-2xl font-bold text-orange-500 mb-10">Mobile <span class="text-black">SHOP</span></h2>
 
     <nav class="flex-1 space-y-3">
-      <a href="/" class="flex items-center px-4 py-2 rounded bg-orange-500 text-white">
+      <a th:href="@{/}" class="flex items-center px-4 py-2 rounded bg-orange-500 text-white">
         <span>📊 Dashboard</span>
       </a>
-      <a href="/user" class="flex items-center px-4 py-2 rounded hover:bg-gray-200">
+      <a th:href="@{/user}" class="flex items-center px-4 py-2 rounded hover:bg-gray-200">
         <span>👤 Users</span>
       </a>
-      <a href="/product" class="flex items-center px-4 py-2 rounded hover:bg-gray-200">
+      <a th:href="@{/products}" class="flex items-center px-4 py-2 rounded hover:bg-gray-200">
         <span>📱 Products</span>
       </a>
-      <a href="/invoice" class="flex items-center px-4 py-2 rounded hover:bg-gray-200">
+      <a th:href="@{/invoice}" class="flex items-center px-4 py-2 rounded hover:bg-gray-200">
         <span>🧾 Invoices</span>
       </a>
     </nav>
@@ -51,34 +51,7 @@
 
   <!-- Main Content -->
   <div class="flex-1 p-6 overflow-y-auto">
-    <!-- Sử dụng th:switch để include template tương ứng -->
-    <div th:switch="${page}">
-      <!-- Dashboard -->
-      <div th:case="'dashboard'" th:include="dashboard"></div>
-
-      <!-- Users -->
-      <div th:case="'user'" th:include="users"></div>
-      <div th:case="'addUser'" th:include="users"></div>
-      <div th:case="'editUser'" th:include="users"></div>
-
-      <!-- Products -->
-      <div th:case="'product'" th:include="products"></div>
-      <div th:case="'products'" th:include="products"></div>
-      <div th:case="'addProduct'" th:include="products"></div>
-      <div th:case="'editProduct'" th:include="products"></div>
-
-      <!-- Invoices -->
-      <div th:case="'invoice'" th:include="invoices"></div>
-      <div th:case="'invoices'" th:include="invoices"></div>
-      <div th:case="'addInvoice'" th:include="invoices"></div>
-      <div th:case="'editInvoice'" th:include="invoices"></div>
-
-      <!-- Default case -->
-      <div th:case="*">
-        <h1 class="text-2xl font-bold">Welcome to Mobile SHOP Admin</h1>
-        <p class="mt-4">Select a menu item to get started.</p>
-      </div>
-    </div>
+    <div th:replace="${page}"></div>
   </div>
 </div>
 

@@ -44,8 +44,8 @@ public class ProductServiceImp implements ProductService{
     }
 
     @Override
-    public List<Product> find_by_brand(String brand) {
-        return productDao.find_by_brand(brand);
+    public List<Product> find_by_brand(String brand, int page, int size) {
+        return productDao.find_by_brand(brand,page ,size );
     }
 
     @Override
@@ -61,5 +61,10 @@ public class ProductServiceImp implements ProductService{
     @Override
     public long count() {
         return productDao.count();
+    }
+
+    @Override
+    public long count_by_brand(String brand) {
+        return productDao.count_by_brand(brand);
     }
 }

@@ -3,6 +3,7 @@ package ra.edu.dto;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.constraints.*;
 
@@ -29,7 +30,9 @@ public class ProductDTO {
     @Min(value = 0, message = "Tồn kho không được âm")
     private Integer stock;
 
-    @NotBlank(message = "Ảnh không được để trống")
-    @Size(max = 255, message = "Đường dẫn ảnh tối đa 255 ký tự")
+//    @NotBlank(message = "Ảnh không được để trống")
+//    @Size(max = 255, message = "Đường dẫn ảnh tối đa 255 ký tự")
     private String image;
+    @NotNull(message="Ảnh không được để trống")
+    private MultipartFile imageFile;
 }

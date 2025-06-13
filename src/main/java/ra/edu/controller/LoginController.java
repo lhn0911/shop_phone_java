@@ -2,6 +2,7 @@ package ra.edu.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
@@ -18,6 +19,15 @@ public class LoginController {
     @Autowired
     private AdminService adminService;
 
+    @GetMapping("/")
+    public String showHomePage(Model model, HttpSession session) {
+        if (session.getAttribute("admin") == null) {
+            return "redirect:/login";
+        }
+        model.addAttribute("page", "dashboard");
+        return "layout";
+    }
+
     @GetMapping("/login")
     public String showLoginForm(@ModelAttribute("adminDTO") AdminDTO adminDTO) {
         return "login";
@@ -28,7 +38,7 @@ public class LoginController {
             @Valid @ModelAttribute("adminDTO") AdminDTO adminDTO,
             BindingResult result,
             RedirectAttributes redirectAttributes,
-            HttpSession session) {
+            HttpSession session, Model model) {
 
         if (result.hasErrors()) {
             return "login";
