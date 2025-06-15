@@ -58,7 +58,6 @@ public class ProductController {
         return "layout";
     }
 
-
     @PostMapping("/add")
     public String addProduct(@Valid @ModelAttribute("productDTO") ProductDTO productDTO,
                              BindingResult result,
@@ -68,6 +67,7 @@ public class ProductController {
         if (session.getAttribute("admin") == null) {
             return "redirect:/login";
         }
+
         if (result.hasErrors()) {
             prepareProductList(model, page, size);
             model.addAttribute("page", "product");
@@ -75,19 +75,33 @@ public class ProductController {
             return "layout";
         }
 
-        if (productDTO.getImageFile() == null || productDTO.getImageFile().isEmpty()) {
-            result.rejectValue("image", "error.image", "Ảnh đại diện không được để trống");
+        if (productService.existsByName(productDTO.getName())) {
+            result.rejectValue("name", "error.name", "Tên sản phẩm đã tồn tại");
+            prepareProductList(model, page, size);
+            model.addAttribute("page", "product");
+            model.addAttribute("showModal", true);
+            return "layout";
         }
-        String imageUrl = null;
+
+        if (productDTO.getImageFile() == null || productDTO.getImageFile().isEmpty()) {
+            result.rejectValue("imageFile", "error.imageFile", "Ảnh đại diện không được để trống");
+            prepareProductList(model, page, size);
+            model.addAttribute("page", "product");
+            model.addAttribute("showModal", true);
+            return "layout";
+        }
+
+        String imageUrl;
         try {
-            if (productDTO.getImageFile() != null && !productDTO.getImageFile().isEmpty()) {
-                Map uploadResult = cloudinary.uploader().upload(productDTO.getImageFile().getBytes(), ObjectUtils.emptyMap());
-                imageUrl = uploadResult.get("secure_url").toString();
-            }
+            Map uploadResult = cloudinary.uploader().upload(productDTO.getImageFile().getBytes(), ObjectUtils.emptyMap());
+            imageUrl = uploadResult.get("secure_url").toString();
         } catch (Exception e) {
             e.printStackTrace();
-            result.rejectValue("imageFile", "error.productDTO", "Lỗi khi upload ảnh");
-            return "product";
+            result.rejectValue("imageFile", "error.imageFile", "Lỗi khi upload ảnh");
+            prepareProductList(model, page, size);
+            model.addAttribute("page", "product");
+            model.addAttribute("showModal", true);
+            return "layout";
         }
 
         Product product = new Product();
@@ -98,10 +112,11 @@ public class ProductController {
         product.setImage(imageUrl);
 
         productService.save(product);
-
         return "redirect:/products";
     }
-@GetMapping("/edit/{id}")
+
+
+    @GetMapping("/edit/{id}")
     public String editProduct(@PathVariable("id") int id, Model model, HttpSession session) {
         if (session.getAttribute("admin") == null) {
             return "redirect:/login";
@@ -120,9 +135,10 @@ public class ProductController {
 
         model.addAttribute("productDTO", productDTO);
         model.addAttribute("page", "product");
-        model.addAttribute("showModal", true);
+        model.addAttribute("showEditModal", true);
         return "layout";
     }
+
     @PostMapping("/edit")
     public String updateProduct(@Valid @ModelAttribute("productDTO") ProductDTO productDTO,
                                 BindingResult result,
@@ -132,41 +148,55 @@ public class ProductController {
         if (session.getAttribute("admin") == null) {
             return "redirect:/login";
         }
+
         if (result.hasErrors()) {
             prepareProductList(model, page, size);
             model.addAttribute("page", "product");
-            model.addAttribute("showModal", true);
+            model.addAttribute("showEditModal", true);
             return "layout";
         }
 
-        String imageUrl = null;
-        try {
-            if (productDTO.getImageFile() != null && !productDTO.getImageFile().isEmpty()) {
-                Map uploadResult = cloudinary.uploader().upload(productDTO.getImageFile().getBytes(), ObjectUtils.emptyMap());
-                imageUrl = uploadResult.get("secure_url").toString();
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-            result.rejectValue("imageFile", "error.productDTO", "Lỗi khi upload ảnh");
-            return "product";
-        }
-
-        Product product = productService.find_by_id(productDTO.getId());
-        if (product == null) {
+        Product existingProduct = productService.find_by_id(productDTO.getId());
+        if (existingProduct == null) {
             return "redirect:/products";
         }
 
-        product.setName(productDTO.getName());
-        product.setBrand(productDTO.getBrand());
-        product.setPrice(productDTO.getPrice());
-        product.setStock(productDTO.getStock());
-        product.setImage(imageUrl);
+        if (!productDTO.getName().equalsIgnoreCase(existingProduct.getName())
+                && productService.existsByName(productDTO.getName())) {
+            result.rejectValue("name", "error.name", "Tên sản phẩm đã tồn tại");
+            prepareProductList(model, page, size);
+            model.addAttribute("page", "product");
+            model.addAttribute("showEditModal", true);
+            return "layout";
+        }
 
-        productService.update(product);
+        String imageUrl = existingProduct.getImage();
+        if (productDTO.getImageFile() != null && !productDTO.getImageFile().isEmpty()) {
+            try {
+                Map uploadResult = cloudinary.uploader().upload(productDTO.getImageFile().getBytes(), ObjectUtils.emptyMap());
+                imageUrl = uploadResult.get("secure_url").toString();
+            } catch (Exception e) {
+                e.printStackTrace();
+                result.rejectValue("imageFile", "error.imageFile", "Lỗi khi upload ảnh");
+                prepareProductList(model, page, size);
+                model.addAttribute("page", "product");
+                model.addAttribute("showEditModal", true);
+                return "layout";
+            }
+        }
 
+        existingProduct.setName(productDTO.getName());
+        existingProduct.setBrand(productDTO.getBrand());
+        existingProduct.setPrice(productDTO.getPrice());
+        existingProduct.setStock(productDTO.getStock());
+        existingProduct.setImage(imageUrl);
+
+        productService.update(existingProduct);
         return "redirect:/products";
     }
-    @GetMapping("/delete/{id}")
+
+
+    @PostMapping("/delete/{id}")
     public String deleteProduct(@PathVariable("id") int id) {
         productService.delete(id);
         return "redirect:/products";

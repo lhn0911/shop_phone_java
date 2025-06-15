@@ -227,4 +227,22 @@ public class ProductDaoImp implements ProductDao{
         }
     }
 
+    @Override
+    public boolean existsByName(String name) {
+        Session session = null;
+        try {
+            session = sessionFactory.openSession();
+            Query<Long> query = session.createQuery("SELECT COUNT(p) FROM Product p WHERE p.name = :name", Long.class);
+            query.setParameter("name", name);
+            return query.uniqueResult() > 0;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        } finally {
+            if (session != null) {
+                session.close();
+            }
+        }
+    }
+
 }

@@ -16,5 +16,7 @@ public interface ProductService {
     List<Product> find_by_stock_range(int minStock, int maxStock);
     long count();
     long count_by_brand(String brand);
+    boolean existsByName(String name);
+
 
 }

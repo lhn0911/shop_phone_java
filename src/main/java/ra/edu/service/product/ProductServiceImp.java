@@ -67,4 +67,9 @@ public class ProductServiceImp implements ProductService{
     public long count_by_brand(String brand) {
         return productDao.count_by_brand(brand);
     }
+
+    @Override
+    public boolean existsByName(String name) {
+        return productDao.existsByName(name);
+    }
 }
