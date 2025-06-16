@@ -26,27 +26,21 @@ public class ProductController {
     private Cloudinary cloudinary;
 
     @GetMapping
-    public String listProducts(HttpSession session
-            , @RequestParam(defaultValue = "1") int page,
+    public String listProducts(HttpSession session,
+                               @RequestParam(defaultValue = "1") int page,
                                @RequestParam(defaultValue = "5") int size,
                                @RequestParam(required = false) String brand,
+                               @RequestParam(required = false) Double minPrice,
+                               @RequestParam(required = false) Double maxPrice,
+                               @RequestParam(required = false) Integer minStock,
+                               @RequestParam(required = false) Integer maxStock,
                                Model model) {
         if (session.getAttribute("admin") == null) {
             return "redirect:/login";
         }
 
-        List<Product> products;
-        long totalItems;
-
-        if (brand != null && !brand.trim().isEmpty()) {
-            products = productService.find_by_brand(brand, page, size);
-            totalItems = productService.count_by_brand(brand);
-            model.addAttribute("brand", brand);
-        } else {
-            products = productService.find_all(page, size);
-            totalItems = productService.count();
-        }
-
+        List<Product> products = productService.findByFilter(brand, minPrice, maxPrice, minStock, maxStock, page, size);
+        long totalItems = productService.countByFilter(brand, minPrice, maxPrice, minStock, maxStock);
         int totalPages = (int) Math.ceil((double) totalItems / size);
 
         model.addAttribute("products", products);
@@ -55,8 +49,15 @@ public class ProductController {
         model.addAttribute("productDTO", new ProductDTO());
         model.addAttribute("page", "product");
 
+        model.addAttribute("brand", brand);
+        model.addAttribute("minPrice", minPrice);
+        model.addAttribute("maxPrice", maxPrice);
+        model.addAttribute("minStock", minStock);
+        model.addAttribute("maxStock", maxStock);
+
         return "layout";
     }
+
 
     @PostMapping("/add")
     public String addProduct(@Valid @ModelAttribute("productDTO") ProductDTO productDTO,
@@ -153,6 +154,7 @@ public class ProductController {
             prepareProductList(model, page, size);
             model.addAttribute("page", "product");
             model.addAttribute("showEditModal", true);
+
             return "layout";
         }
 

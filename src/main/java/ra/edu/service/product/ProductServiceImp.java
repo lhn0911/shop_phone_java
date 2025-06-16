@@ -44,19 +44,29 @@ public class ProductServiceImp implements ProductService{
     }
 
     @Override
-    public List<Product> find_by_brand(String brand, int page, int size) {
-        return productDao.find_by_brand(brand,page ,size );
+    public List<Product> findByFilter(String brand, Double minPrice, Double maxPrice, Integer minStock, Integer maxStock, int page, int size) {
+        return productDao.findByFilter(brand, minPrice, maxPrice, minStock, maxStock, page, size);
     }
 
     @Override
-    public List<Product> find_by_price_range(double minPrice, double maxPrice) {
-        return productDao.find_by_price_range(minPrice, maxPrice);
+    public long countByFilter(String brand, Double minPrice, Double maxPrice, Integer minStock, Integer maxStock) {
+        return productDao.countByFilter(brand, minPrice, maxPrice, minStock, maxStock);
     }
 
-    @Override
-    public List<Product> find_by_stock_range(int minStock, int maxStock) {
-        return productDao.find_by_stock_range(minStock, maxStock);
-    }
+//    @Override
+//    public List<Product> find_by_brand(String brand, int page, int size) {
+//        return productDao.find_by_brand(brand,page ,size );
+//    }
+//
+//    @Override
+//    public List<Product> find_by_price_range(double minPrice, double maxPrice) {
+//        return productDao.find_by_price_range(minPrice, maxPrice);
+//    }
+//
+//    @Override
+//    public List<Product> find_by_stock_range(int minStock, int maxStock) {
+//        return productDao.find_by_stock_range(minStock, maxStock);
+//    }
 
     @Override
     public long count() {
