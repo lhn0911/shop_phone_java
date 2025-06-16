@@ -198,9 +198,16 @@ public class ProductController {
     }
 
 
-    @PostMapping("/delete/{id}")
-    public String deleteProduct(@PathVariable("id") int id) {
-        productService.delete(id);
+   @PostMapping("/delete/{id}")
+    public String deleteProduct(@PathVariable("id") int id, HttpSession session) {
+        if (session.getAttribute("admin") == null) {
+            return "redirect:/login";
+        }
+        Product product = productService.find_by_id(id);
+        if (product != null) {
+            product.setStatus(!product.isStatus());
+            productService.update(product);
+        }
         return "redirect:/products";
     }
 

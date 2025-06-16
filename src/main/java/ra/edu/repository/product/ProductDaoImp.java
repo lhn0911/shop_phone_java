@@ -92,25 +92,6 @@ public class ProductDaoImp implements ProductDao{
     }
 
     @Override
-    public void delete(int id) {
-        Session session = null;
-        try {
-            session = sessionFactory.openSession();
-            session.beginTransaction();
-            Product product = session.get(Product.class, id);
-            if (product != null) {
-                session.delete(product);
-            }
-            session.getTransaction().commit();
-        } catch (Exception e) {
-            if (session != null && session.getTransaction().isActive()) {
-                session.getTransaction().rollback();
-            }
-            e.printStackTrace();
-        }
-    }
-
-    @Override
     public List<Product> find_by_name(String name) {
         Session session = null;
         List<Product> productList = new ArrayList<>();

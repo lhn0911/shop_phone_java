@@ -9,7 +9,6 @@ public interface ProductDao {
     Product find_by_id(int id);
     void save(Product product);
     void update(Product product);
-    void delete(int id);
     List<Product> find_by_name(String name);
     List<Product> findByFilter(String brand, Double minPrice, Double maxPrice,
                                Integer minStock, Integer maxStock, int page, int size);

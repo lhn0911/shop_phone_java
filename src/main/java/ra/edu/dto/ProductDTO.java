@@ -35,4 +35,6 @@ public class ProductDTO {
     private String image;
     @NotNull(message="Ảnh không được để trống")
     private MultipartFile imageFile;
+    private boolean status = true;
+
 }

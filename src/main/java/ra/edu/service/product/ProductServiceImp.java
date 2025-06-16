@@ -31,12 +31,6 @@ public class ProductServiceImp implements ProductService{
     public void update(Product product) {
         productDao.update(product);
     }
-
-    @Override
-    public void delete(int id) {
-        productDao.delete(id);
-    }
-
     @Override
     public List<Product> find_by_name(String name) {
         return productDao.find_by_name(name);
