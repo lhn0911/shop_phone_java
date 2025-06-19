@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<body>
+
+<!-- Edit Customer Modal Fragment -->
+<div th:fragment="edit-modal">
+    <div id="editModal" class="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50 hidden">
+        <div class="bg-white rounded-lg w-full max-w-md p-6 shadow-lg relative">
+            <h2 class="text-xl font-semibold mb-4 text-center">Sửa thông tin khách hàng</h2>
+
+            <form th:action="@{/customers/edit}" th:object="${customerDTO}" method="post" class="space-y-4">
+                <input type="hidden" id="editCustomerId" name="id"/>
+
+                <div>
+                    <label class="block text-gray-700 font-medium">Tên khách hàng</label>
+                    <input type="text" id="editCustomerName" th:field="*{name}" class="w-full border px-3 py-2 rounded">
+                    <span th:if="${#fields.hasErrors('name')}" th:errors="*{name}" class="text-red-500 text-sm"></span>
+                </div>
+
+                <div>
+                    <label class="block text-gray-700 font-medium">Email</label>
+                    <input type="email" id="editCustomerEmail" th:field="*{email}" class="w-full border px-3 py-2 rounded">
+                    <span th:if="${#fields.hasErrors('email')}" th:errors="*{email}" class="text-red-500 text-sm"></span>
+                </div>
+
+                <div>
+                    <label class="block text-gray-700 font-medium">Số điện thoại</label>
+                    <input type="text" id="editCustomerPhone" th:field="*{phone}" class="w-full border px-3 py-2 rounded">
+                    <span th:if="${#fields.hasErrors('phone')}" th:errors="*{phone}" class="text-red-500 text-sm"></span>
+                </div>
+
+                <div>
+                    <label class="block text-gray-700 font-medium">Địa chỉ</label>
+                    <input type="text" id="editCustomerAddress" th:field="*{address}" class="w-full border px-3 py-2 rounded">
+                    <span th:if="${#fields.hasErrors('address')}" th:errors="*{address}" class="text-red-500 text-sm"></span>
+                </div>
+                <div class="flex justify-between mt-6">
+                    <button type="submit" class="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600">Cập nhật</button>
+                    <button type="button"
+                            onclick="closeEditModal()"
+                            class="bg-gray-400 text-white px-4 py-2 rounded hover:bg-gray-500">
+                        Đóng
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

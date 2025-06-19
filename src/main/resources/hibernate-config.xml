@@ -18,6 +18,9 @@
 
         <mapping class="ra.edu.entity.Admin" />
         <mapping class="ra.edu.entity.Product" />
+        <mapping class="ra.edu.entity.Customer" />
+        <mapping class="ra.edu.entity.Invoice" />
+        <mapping class="ra.edu.entity.InvoiceDetail" />
 
     </session-factory>
 </hibernate-configuration>

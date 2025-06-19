@@ -25,4 +25,5 @@ public class InvoiceDetail {
 
     @Column(name = "unit_price", nullable = false, precision = 12, scale = 2)
     private BigDecimal unitPrice;
+
 }

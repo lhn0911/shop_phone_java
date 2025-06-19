@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<body>
+
+<!-- Search Form Fragment -->
+<div th:fragment="search-form">
+    <form method="get" action="/products" class="mb-4 grid grid-cols-1 md:grid-cols-5 gap-2">
+        <input type="text" name="brand" th:value="${brand}" placeholder="Thương hiệu..."
+               class="px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-orange-300">
+
+        <input type="number" name="minPrice" th:value="${minPrice}" placeholder="Giá từ"
+               class="px-4 py-2 border border-gray-300 rounded">
+        <input type="number" name="maxPrice" th:value="${maxPrice}" placeholder="đến"
+               class="px-4 py-2 border border-gray-300 rounded">
+
+        <input type="number" name="minStock" th:value="${minStock}" placeholder="Tồn kho từ"
+               class="px-4 py-2 border border-gray-300 rounded">
+        <input type="number" name="maxStock" th:value="${maxStock}" placeholder="đến"
+               class="px-4 py-2 border border-gray-300 rounded">
+
+        <!-- Nút tìm và bỏ lọc -->
+        <div class="md:col-span-5 flex justify-between">
+            <button type="submit" class="bg-orange-500 text-white px-4 py-2 rounded hover:bg-orange-600">Tìm kiếm</button>
+            <button type="button" onclick="resetFilters()"
+                    class="bg-gray-400 text-white px-4 py-2 rounded hover:bg-gray-500">
+                Bỏ lọc
+            </button>
+        </div>
+    </form>
+</div>
+
+</body>
+</html>

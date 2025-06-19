@@ -5,7 +5,8 @@ import ra.edu.utils.InvoiceStatus;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
+import java.util.Date;
+import java.util.List;
 
 @Data
 @Entity
@@ -19,12 +20,16 @@ public class Invoice {
     private Customer customer;
 
     @Column(name = "created_at", columnDefinition = "DATETIME DEFAULT CURRENT_TIMESTAMP")
-    private LocalDateTime createdAt;
+    private Date createdAt;
+
 
     @Column(name = "total_amount", nullable = false, precision = 12, scale = 2)
     private BigDecimal totalAmount;
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false, columnDefinition = "ENUM('PENDING', 'CONFIRMED', 'SHIPING', 'COMPLETED', 'CANCELED') DEFAULT 'PENDING'")
+    @Column(nullable = false, columnDefinition = "ENUM('PENDING', 'CONFIRMING', 'SHIPPING', 'COMPLETED', 'CANCELED') DEFAULT 'PENDING'")
     private InvoiceStatus status = InvoiceStatus.PENDING;
+    @OneToMany(mappedBy = "invoice", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<InvoiceDetail> invoiceDetails;
+
 }

@@ -2,8 +2,8 @@ package ra.edu.utils;
 
 public enum InvoiceStatus {
     PENDING,
-    CONFIRMED,
-    SHIPING,
+    CONFIRMING,
+    SHIPPING,
     COMPLETED,
     CANCELED
 }

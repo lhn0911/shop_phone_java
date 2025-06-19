@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<body>
+
+<!-- Invoice Search Form Fragment -->
+<div th:fragment="search-form">
+    <div class="bg-gray-50 p-4 rounded-lg mb-6">
+        <h3 class="text-lg font-medium text-gray-700 mb-4">
+            <i class="fa-solid fa-filter mr-2"></i>Bộ lọc tìm kiếm
+        </h3>
+
+        <form method="get" th:action="@{/invoices}" class="space-y-4">
+            <!-- Hàng 1: Khách hàng và Trạng thái -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <!-- Khách hàng -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Khách hàng</label>
+                    <select name="customerId" class="w-full border border-gray-300 px-3 py-2 rounded focus:outline-none focus:border-orange-500">
+                        <option value="">-- Tất cả khách hàng --</option>
+                        <option th:each="c : ${customers}"
+                                th:value="${c.id}"
+                                th:text="${c.name}"
+                                th:selected="${customerId != null && customerId.toString() == c.id.toString()}"></option>
+                    </select>
+                </div>
+
+                <!-- Trạng thái -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Trạng thái</label>
+                    <select name="status" class="w-full border border-gray-300 px-3 py-2 rounded focus:outline-none focus:border-orange-500">
+                        <option value="">-- Tất cả trạng thái --</option>
+                        <option value="true" th:selected="${status != null && status == 'true'}">Hoạt động</option>
+                        <option value="false" th:selected="${status != null && status == 'false'}">Không hoạt động</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Hàng 2: Khoảng thời gian -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <!-- Từ ngày -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Từ ngày</label>
+                    <input type="date"
+                           name="startDate"
+                           th:value="${startDate}"
+                           class="w-full border border-gray-300 px-3 py-2 rounded focus:outline-none focus:border-orange-500">
+                </div>
+
+                <!-- Đến ngày -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Đến ngày</label>
+                    <input type="date"
+                           name="endDate"
+                           th:value="${endDate}"
+                           class="w-full border border-gray-300 px-3 py-2 rounded focus:outline-none focus:border-orange-500">
+                </div>
+            </div>
+
+            <!-- Hàng 3: Khoảng giá tiền -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <!-- Tổng tiền từ -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Tổng tiền từ</label>
+                    <input type="number"
+                           name="minAmount"
+                           th:value="${minAmount}"
+                           class="w-full border border-gray-300 px-3 py-2 rounded focus:outline-none focus:border-orange-500"
+                           min="0"
+                           step="0.01"
+                           placeholder="0">
+                </div>
+
+                <!-- Tổng tiền đến -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Tổng tiền đến</label>
+                    <input type="number"
+                           name="maxAmount"
+                           th:value="${maxAmount}"
+                           class="w-full border border-gray-300 px-3 py-2 rounded focus:outline-none focus:border-orange-500"
+                           min="0"
+                           step="0.01"
+                           placeholder="∞">
+                </div>
+            </div>
+
+            <!-- Hàng 4: Tìm kiếm theo mã đơn hàng -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <!-- Mã đơn hàng -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Mã đơn hàng</label>
+                    <input type="text"
+                           name="invoiceCode"
+                           th:value="${invoiceCode}"
+                           class="w-full border border-gray-300 px-3 py-2 rounded focus:outline-none focus:border-orange-500"
+                           placeholder="Nhập mã đơn hàng">
+                </div>
+
+                <!-- Số lượng hiển thị -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Số lượng hiển thị</label>
+                    <select name="size" class="w-full border border-gray-300 px-3 py-2 rounded focus:outline-none focus:border-orange-500">
+                        <option value="10" th:selected="${param.size != null && param.size[0] == '10'}">10</option>
+                        <option value="20" th:selected="${param.size != null && param.size[0] == '20'}">20</option>
+                        <option value="50" th:selected="${param.size != null && param.size[0] == '50'}">50</option>
+                        <option value="100" th:selected="${param.size != null && param.size[0] == '100'}">100</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Nút thao tác -->
+            <div class="flex flex-wrap gap-3 pt-2">
+                <button type="submit" class="bg-orange-500 text-white px-6 py-2 rounded hover:bg-orange-600 transition duration-200 flex items-center">
+                    <i class="fa-solid fa-search mr-2"></i>Tìm kiếm
+                </button>
+
+                <button type="button" onclick="resetFilters()" class="bg-gray-500 text-white px-6 py-2 rounded hover:bg-gray-600 transition duration-200 flex items-center">
+                    <i class="fa-solid fa-refresh mr-2"></i>Đặt lại
+                </button>
+
+                <button type="button" onclick="exportToExcel()" class="bg-green-500 text-white px-6 py-2 rounded hover:bg-green-600 transition duration-200 flex items-center">
+                    <i class="fa-solid fa-file-excel mr-2"></i>Xuất Excel
+                </button>
+            </div>
+
+            <!-- Hiển thị kết quả tìm kiếm -->
+            <div th:if="${totalElements != null}" class="text-sm text-gray-600 mt-3 p-3 bg-blue-50 rounded border-l-4 border-blue-400">
+                <i class="fa-solid fa-info-circle mr-1"></i>
+                Tìm thấy <strong th:text="${totalElements}">0</strong> đơn hàng
+                <span th:if="${customerId != null || status != null || startDate != null || endDate != null || minAmount != null || maxAmount != null || invoiceCode != null}">
+                    phù hợp với điều kiện tìm kiếm
+                </span>
+            </div>
+        </form>
+    </div>
+</div>
+
+</body>
+</html>
