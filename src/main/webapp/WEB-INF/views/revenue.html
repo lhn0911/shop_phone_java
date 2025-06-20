@@ -1,0 +1,59 @@
+<!--<!DOCTYPE html>-->
+<!--<html lang="en" xmlns:th="http://www.thymeleaf.org">-->
+<!--<head>-->
+<!--    <meta charset="UTF-8">-->
+<!--    <title>Thống kê doanh thu</title>-->
+<!--    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">-->
+<!--    <script src="https://kit.fontawesome.com/1eb546f010.js" crossorigin="anonymous"></script>-->
+<!--</head>-->
+<!--<body class="bg-gray-100 p-6">-->
+
+<!--<div class="max-w-6xl mx-auto bg-white p-6 rounded shadow-md">-->
+
+<!--    &lt;!&ndash; Giao diện doanh thu &ndash;&gt;-->
+<!--    <div th:if="${page == 'revenue'}">-->
+<!--        &lt;!&ndash; Header &ndash;&gt;-->
+<!--        <div class="flex justify-between items-center mb-6">-->
+<!--            <h1 class="text-2xl font-bold text-gray-800">Thống kê doanh thu</h1>-->
+<!--            <form class="flex items-center space-x-2" method="get" th:action="@{/revenue}">-->
+<!--                <input type="date" name="startDate" th:value="${startDate}" class="border rounded px-3 py-1"/>-->
+<!--                <input type="date" name="endDate" th:value="${endDate}" class="border rounded px-3 py-1"/>-->
+<!--                <button type="submit" class="bg-orange-500 text-white px-4 py-1 rounded hover:bg-orange-600">Lọc</button>-->
+<!--            </form>-->
+<!--        </div>-->
+
+<!--        &lt;!&ndash; Bảng thống kê &ndash;&gt;-->
+<!--        <table class="w-full bg-white border border-gray-200 rounded shadow-sm">-->
+<!--            <thead class="bg-gray-100 text-sm font-medium text-gray-700">-->
+<!--            <tr>-->
+<!--                <th class="py-3 px-4 border-b text-left">STT</th>-->
+<!--                <th class="py-3 px-4 border-b text-left">Ngày tạo</th>-->
+<!--                <th class="py-3 px-4 border-b text-left">Khách hàng</th>-->
+<!--                <th class="py-3 px-4 border-b text-right">Tổng tiền</th>-->
+<!--                <th class="py-3 px-4 border-b text-center">Trạng thái</th>-->
+<!--            </tr>-->
+<!--            </thead>-->
+<!--            <tbody>-->
+<!--            <tr th:each="invoice, iter : ${invoices}">-->
+<!--                <td class="py-3 px-4 border-b" th:text="${iter.index + 1}"></td>-->
+<!--                <td class="py-3 px-4 border-b" th:text="${#dates.format(invoice.createdAt, 'dd/MM/yyyy')}"></td>-->
+<!--                <td class="py-3 px-4 border-b" th:text="${invoice.customer.name}"></td>-->
+<!--                <td class="py-3 px-4 border-b text-right" th:text="${#numbers.formatDecimal(invoice.totalAmount, 0, 'COMMA', 2, 'POINT')} + ' $'"></td>-->
+<!--                <td class="py-3 px-4 border-b text-center">-->
+<!--                    <span th:if="${invoice.status.name() == 'COMPLETED'}" class="text-green-600 font-semibold">Hoàn tất</span>-->
+<!--                    <span th:if="${invoice.status.name() == 'PENDING'}" class="text-yellow-600 font-semibold">Chờ xử lý</span>-->
+<!--                </td>-->
+<!--            </tr>-->
+<!--            </tbody>-->
+<!--        </table>-->
+
+<!--        &lt;!&ndash; Tổng doanh thu &ndash;&gt;-->
+<!--        <div class="text-right mt-6 text-xl font-bold text-gray-800">-->
+<!--            Tổng doanh thu: <span th:text="${#numbers.formatDecimal(totalRevenue, 0, 'COMMA', 2, 'POINT')} + ' $'"></span>-->
+<!--        </div>-->
+<!--    </div>-->
+
+<!--</div>-->
+
+<!--</body>-->
+<!--</html>-->

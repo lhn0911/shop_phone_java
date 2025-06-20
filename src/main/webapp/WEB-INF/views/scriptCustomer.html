@@ -65,7 +65,7 @@
                     const customerId = this.getAttribute("data-id");
                     const currentStatus = this.getAttribute("data-status") === "true";
 
-                    if (confirm(`Bạn có chắc chắn muốn ${currentStatus ? "vô hiệu hóa" : "kích hoạt"} khách hàng này?`)) {
+                    if (confirm(`Bạn có chắc chắn muốn ${currentStatus ? "kích hoạt" : "vô hiệu hóa"} khách hàng này?`)) {
                         fetch(`/customers/delete/${customerId}`, {
                             method: "POST"
                         }).then(res => {

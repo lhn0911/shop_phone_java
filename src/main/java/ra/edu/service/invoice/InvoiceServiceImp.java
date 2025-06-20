@@ -23,8 +23,9 @@ public class InvoiceServiceImp implements InvoiceService{
     }
 
     @Override
-    public void save(Invoice invoice) {
+    public Invoice save(Invoice invoice) {
         invoiceDao.save(invoice);
+        return invoice;
     }
 
     @Override

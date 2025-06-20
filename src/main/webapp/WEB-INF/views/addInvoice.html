@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>Thêm hóa đơn</title>
+</head>
+<body>
+<div th:fragment="add-modal">
+  <div id="addInvoiceModal" class="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50 hidden">
+    <div class="bg-white rounded-lg w-full max-w-2xl p-6 shadow-lg relative">
+      <h2 class="text-xl font-semibold mb-4 text-center">Thêm hóa đơn</h2>
+
+      <form th:action="@{/invoices/add}" th:object="${invoiceDTO}" method="post" class="space-y-4">
+
+        <!-- Khách hàng -->
+        <div>
+          <label class="block text-gray-700 font-medium mb-1">Khách hàng</label>
+          <select th:field="*{customerId}" class="w-full border px-3 py-2 rounded">
+            <option value="" disabled>-- Chọn khách hàng --</option>
+            <option th:each="c : ${customers}" th:value="${c.id}" th:text="${c.name}"></option>
+          </select>
+          <span th:if="${#fields.hasErrors('customerId')}" th:errors="*{customerId}" class="text-red-500 text-sm"></span>
+        </div>
+
+        <!-- Chi tiết hóa đơn -->
+        <div>
+          <h3 class="font-semibold text-lg mt-4 mb-2">Chi tiết hóa đơn</h3>
+          <table class="w-full border rounded">
+            <thead class="bg-gray-100 text-sm">
+            <tr>
+              <th class="px-2 py-2">STT</th>
+              <th class="px-2 py-2">Tên SP</th>
+              <th class="px-2 py-2">Thương hiệu</th>
+              <th class="px-2 py-2">Số lượng</th>
+              <th class="px-2 py-2">Giá</th>
+              <th class="px-2 py-2">Tổng</th>
+              <th class="px-2 py-2">Xóa</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="detail, iter : ${invoiceDTO.invoiceDetails}">
+              <td th:text="${iter.index + 1}"></td>
+
+              <!-- Tên SP -->
+              <td th:text="${productMap[detail.productId]?.name}">N/A</td>
+
+              <!-- Thương hiệu -->
+              <td th:text="${productMap[detail.productId]?.brand}">N/A</td>
+
+              <!-- Số lượng -->
+              <td class="text-center">
+                <input type="number"
+                       th:field="*{invoiceDetails[__${iter.index}__].quantity}"
+                       min="0"
+                       class="w-16 border rounded text-center"
+                       th:attr="oninput=|updateAmountRow(${iter.index})|" />
+              </td>
+
+              <!-- Giá -->
+              <td class="text-right"
+                  th:id="'price-' + ${iter.index}"
+                  th:data-price="${detail.unitPrice}"
+                  th:text="${detail.unitPrice != null ? #numbers.formatDecimal(detail.unitPrice, 0, 'COMMA', 2, 'POINT') + ' $' : '0 $'}">
+              </td>
+
+              <!-- Hidden fields -->
+              <input type="hidden" th:field="*{invoiceDetails[__${iter.index}__].unitPrice}"
+                     th:value="${detail.unitPrice}" />
+              <input type="hidden" th:field="*{invoiceDetails[__${iter.index}__].productId}"
+                     th:value="${detail.productId}" />
+
+              <!-- Tổng tiền từng dòng -->
+              <td class="text-right"
+                  th:id="'total-' + ${iter.index}"
+                  th:text="${detail.unitPrice != null && detail.quantity != null ?
+        (#numbers.formatDecimal(detail.unitPrice.multiply(T(java.math.BigDecimal).valueOf(detail.quantity)), 0, 'COMMA', 2, 'POINT') + ' $')
+        : '0 $'}">
+              </td>
+
+              <!-- Xóa -->
+              <td class="text-center">
+                <button type="button" class="text-red-500 hover:text-red-700" onclick="removeDetailRow(this)">
+                  <i class="fa-solid fa-trash"></i>
+                </button>
+              </td>
+            </tr>
+
+
+            </tbody>
+          </table>
+
+          <!-- Tổng cộng toàn bộ -->
+          <div class="text-right mt-4 font-bold text-lg">
+            Tổng cộng: <span id="grand-total">0 $</span>
+          </div>
+        </div>
+
+        <!-- Nút -->
+        <div class="flex justify-between mt-6">
+          <button type="submit" class="bg-orange-500 text-white px-4 py-2 rounded hover:bg-orange-600">Lưu</button>
+          <button type="button" onclick="closeAddInvoiceModal()" class="bg-gray-400 text-white px-4 py-2 rounded hover:bg-gray-500">Đóng</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

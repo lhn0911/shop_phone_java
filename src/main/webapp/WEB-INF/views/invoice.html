@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Danh sách sản phẩm</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <script src="https://kit.fontawesome.com/1eb546f010.js" crossorigin="anonymous"></script>
+</head>
+<body class="bg-gray-100 p-6">
+
+<div class="max-w-6xl mx-auto bg-white p-6 rounded shadow-md">
+
+    <!-- Hiển thị danh sách hóa đơn -->
+    <div th:if="${page == 'invoice'}">
+        <!-- Header -->
+        <div class="flex justify-between items-center mb-6">
+            <h1 class="text-2xl font-bold text-gray-800">Danh sách hóa đơn</h1>
+            <button type="button" onclick="openAddInvoiceModal()"
+                    class="bg-orange-500 text-white px-4 py-2 rounded hover:bg-orange-600">
+                Thêm hóa đơn
+            </button>
+        </div>
+
+        <!-- Search (nếu có) -->
+        <div th:replace="invoiceSearch :: search-form"></div>
+
+        <!-- Invoice Table -->
+        <table class="w-full bg-white border border-gray-200 rounded shadow-sm">
+            <thead class="bg-gray-100 text-sm font-medium text-gray-700">
+            <tr>
+                <th class="py-3 px-4 border-b text-left">STT</th>
+                <th class="py-3 px-4 border-b text-left">Khách hàng</th>
+                <th class="py-3 px-4 border-b text-left">Ngày tạo</th>
+                <th class="py-3 px-4 border-b text-center">Trạng thái</th>
+                <th class="py-3 px-4 border-b text-right">Tổng tiền</th>
+                <th class="py-3 px-4 border-b text-center">Thao tác</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="invoice, iterStat : ${invoices}">
+                <td class="py-3 px-4 border-b" th:text="${iterStat.index + 1}">1</td>
+                <td class="py-3 px-4 border-b" th:text="${invoice.customer.name}">Tên KH</td>
+                <td class="py-3 px-4 border-b" th:text="${#dates.format(invoice.createdAt, 'dd/MM/yyyy')}">20/10/2022</td>
+                <td class="py-3 px-4 border-b text-center">
+                <span th:switch="${invoice.status.toString()}">
+                    <span th:case="'PENDING'" class="bg-yellow-300 text-yellow-900 text-sm font-semibold px-2 py-1 rounded">PENDING</span>
+                    <span th:case="'CONFIRMING'" class="bg-purple-300 text-purple-900 text-sm font-semibold px-2 py-1 rounded">CONFIRMING</span>
+                    <span th:case="'SHIPPING'" class="bg-blue-300 text-blue-900 text-sm font-semibold px-2 py-1 rounded">SHIPPING</span>
+                    <span th:case="'COMPLETED'" class="bg-green-300 text-green-900 text-sm font-semibold px-2 py-1 rounded">COMPLETED</span>
+                    <span th:case="'CANCELED'" class="bg-red-300 text-red-900 text-sm font-semibold px-2 py-1 rounded">CANCELED</span>
+                </span>
+                </td>
+                <td class="py-3 px-4 border-b text-right" th:text="${#numbers.formatDecimal(invoice.totalAmount, 0, 'COMMA', 2, 'POINT')} + ' $'">1,200 $</td>
+                <td class="py-3 px-4 border-b text-center space-x-2">
+                    <!-- Edit -->
+                    <a th:href="@{/invoices/edit/{id}(id=${invoice.id})}" class="text-blue-500 hover:underline">
+                        <i class="fa-solid fa-pen"></i>
+                    </a>
+                    <!-- View -->
+                    <a th:href="@{/invoices/view/{id}(id=${invoice.id})}" class="text-purple-500 hover:underline">
+                        <i class="fa-solid fa-eye"></i>
+                    </a>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+
+        <!-- Pagination -->
+        <div class="mt-6 flex justify-center space-x-1">
+            <a th:if="${currentPage > 1}" th:href="@{/invoices(page=${currentPage - 1})}"
+               class="px-3 py-1 border rounded hover:bg-gray-200 text-gray-600">&laquo;</a>
+            <span th:unless="${currentPage > 1}"
+                  class="px-3 py-1 border rounded text-gray-400 cursor-not-allowed">&laquo;</span>
+
+            <a th:each="i : ${#numbers.sequence(1, totalPages)}"
+               th:href="@{/invoices(page=${i})}" th:text="${i}"
+               th:class="${i == currentPage} ? 'px-3 py-1 border rounded bg-orange-500 text-white' : 'px-3 py-1 border rounded bg-white text-gray-700 hover:bg-gray-200'">
+            </a>
+
+            <a th:if="${currentPage < totalPages}" th:href="@{/invoices(page=${currentPage + 1})}"
+               class="px-3 py-1 border rounded hover:bg-gray-200 text-gray-600">&raquo;</a>
+            <span th:unless="${currentPage < totalPages}"
+                  class="px-3 py-1 border rounded text-gray-400 cursor-not-allowed">&raquo;</span>
+        </div>
+    </div>
+    <!-- Modal thêm hóa đơn -->
+    <div th:replace="addInvoice :: add-modal"></div>
+
+    <!-- Script xử lý -->
+    <div th:replace="scriptInvoice :: scripts"></div>
+</div>
+</body>
+</html>

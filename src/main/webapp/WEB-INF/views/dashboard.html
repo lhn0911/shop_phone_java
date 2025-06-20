@@ -2,50 +2,301 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Title</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mobile SHOP Dashboard</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
-<body>
-<div>
-  <h1 class="text-3xl font-bold mb-6">Dashboard</h1>
+<body class="bg-gray-50">
+<div class="flex min-h-screen">
+  <!-- Main Content -->
+  <div th:if = "${page == 'dashboard'}" class="flex-1 p-8">
 
-  <!-- Cards -->
-  <div class="grid grid-cols-4 gap-4 mb-6">
-    <div class="bg-white p-4 shadow rounded">
-      <p class="text-gray-500">Total Revenue</p>
-      <p class="text-2xl font-bold">$12,426</p>
-    </div>
-    <div class="bg-white p-4 shadow rounded">
-      <p class="text-gray-500">Total Product</p>
-      <p class="text-2xl font-bold">1,500</p>
-    </div>
-    <div class="bg-white p-4 shadow rounded">
-      <p class="text-gray-500">Total Invoice</p>
-      <p class="text-2xl font-bold">84,382</p>
-    </div>
-    <div class="bg-white p-4 shadow rounded">
-      <p class="text-gray-500">Total Users</p>
-      <p class="text-2xl font-bold">33,493</p>
-    </div>
-  </div>
+    <!-- Metrics Cards -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+      <!-- Total Revenue -->
+      <div class="bg-white p-6 rounded-lg shadow-sm">
+        <div class="flex items-center justify-between">
+          <div>
+            <p class="text-sm text-gray-500 uppercase tracking-wide">TOTAL REVENUE</p>
+            <p class="text-2xl font-bold text-gray-900">$12,426</p>
+          </div>
+          <span class="text-green-500 text-sm font-medium">+36% ↑</span>
+        </div>
+      </div>
 
-  <!-- Placeholder for chart, transactions, etc. -->
-  <div class="grid grid-cols-3 gap-4">
-    <div class="col-span-2 bg-white p-4 rounded shadow">
-      <p class="font-bold mb-2">Sales Report</p>
-      <div class="h-40 bg-gray-100 flex items-center justify-center text-gray-400">
-        Chart Placeholder
+      <!-- Total Product -->
+      <div class="bg-white p-6 rounded-lg shadow-sm">
+        <div class="flex items-center justify-between">
+          <div>
+            <p class="text-sm text-gray-500 uppercase tracking-wide">TOTAL PRODUCT</p>
+            <p class="text-2xl font-bold text-gray-900" th:text="${totalProducts}">0</p>
+          </div>
+          <span class="text-red-500 text-sm font-medium">+14% ↑</span>
+        </div>
+      </div>
+
+      <!-- Total Invoice -->
+      <div class="bg-white p-6 rounded-lg shadow-sm">
+        <div class="flex items-center justify-between">
+          <div>
+            <p class="text-sm text-gray-500 uppercase tracking-wide">TOTAL INVOICE</p>
+            <p class="text-2xl font-bold text-gray-900" th:text="${totalInvoices}">0</p>
+          </div>
+          <span class="text-green-500 text-sm font-medium">+36% ↑</span>
+        </div>
+      </div>
+
+      <!-- Total User -->
+      <div class="bg-white p-6 rounded-lg shadow-sm">
+        <div class="flex items-center justify-between">
+          <div>
+            <p class="text-sm text-gray-500 uppercase tracking-wide">TOTAL USER</p>
+            <p class="text-2xl font-bold text-gray-900" th:text="${totalCustomers}">0</p>
+          </div>
+          <span class="text-green-500 text-sm font-medium">+36% ↑</span>
+        </div>
       </div>
     </div>
-    <div class="bg-white p-4 rounded shadow">
-      <p class="font-bold mb-2">Traffic Sources</p>
-      <ul class="space-y-2">
-        <li>Direct: 65%</li>
-        <li>Referral: 25%</li>
-        <li>Social Media: 10%</li>
-      </ul>
+
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+      <!-- Sales Report Chart -->
+      <div class="lg:col-span-2 bg-white p-6 rounded-lg shadow-sm">
+        <div class="flex items-center justify-between mb-6">
+          <h2 class="text-lg font-semibold text-gray-800">Sales Report</h2>
+          <div class="flex space-x-2">
+            <button class="px-3 py-1 text-sm bg-blue-500 text-white rounded">12 Months</button>
+            <button class="px-3 py-1 text-sm text-gray-500 hover:bg-gray-100 rounded">6 Months</button>
+            <button class="px-3 py-1 text-sm text-gray-500 hover:bg-gray-100 rounded">30 Days</button>
+            <button class="px-3 py-1 text-sm text-gray-500 hover:bg-gray-100 rounded">7 Days</button>
+            <button class="px-3 py-1 text-sm text-gray-500 hover:bg-gray-100 rounded flex items-center">
+              <i class="fas fa-download mr-1"></i> Export PDF
+            </button>
+          </div>
+        </div>
+        <div class="relative">
+          <canvas id="salesChart" width="400" height="200"></canvas>
+          <div class="absolute top-4 left-4 text-sm text-gray-600">
+            <div class="font-semibold">June 2021</div>
+            <div class="text-lg font-bold">$45,591</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Traffic Sources -->
+      <div class="bg-white p-6 rounded-lg shadow-sm">
+        <div class="flex items-center justify-between mb-6">
+          <h2 class="text-lg font-semibold text-gray-800">Traffic Sources</h2>
+          <select class="text-sm border border-gray-300 rounded px-2 py-1">
+            <option>Last 7 Days</option>
+          </select>
+        </div>
+        <div class="space-y-4">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center">
+              <div class="w-3 h-3 bg-blue-500 rounded mr-3"></div>
+              <span class="text-sm text-gray-600">Direct</span>
+            </div>
+            <span class="text-sm font-medium">143,382</span>
+          </div>
+          <div class="w-full bg-gray-200 rounded-full h-2">
+            <div class="bg-blue-500 h-2 rounded-full" style="width: 60%"></div>
+          </div>
+
+          <div class="flex items-center justify-between">
+            <div class="flex items-center">
+              <div class="w-3 h-3 bg-purple-500 rounded mr-3"></div>
+              <span class="text-sm text-gray-600">Referral</span>
+            </div>
+            <span class="text-sm font-medium">87,971</span>
+          </div>
+          <div class="w-full bg-gray-200 rounded-full h-2">
+            <div class="bg-purple-500 h-2 rounded-full" style="width: 40%"></div>
+          </div>
+
+          <div class="flex items-center justify-between">
+            <div class="flex items-center">
+              <div class="w-3 h-3 bg-green-500 rounded mr-3"></div>
+              <span class="text-sm text-gray-600">Social Media</span>
+            </div>
+            <span class="text-sm font-medium">45,211</span>
+          </div>
+          <div class="w-full bg-gray-200 rounded-full h-2">
+            <div class="bg-green-500 h-2 rounded-full" style="width: 20%"></div>
+          </div>
+
+          <div class="flex items-center justify-between">
+            <div class="flex items-center">
+              <div class="w-3 h-3 bg-yellow-500 rounded mr-3"></div>
+              <span class="text-sm text-gray-600">Twitter</span>
+            </div>
+            <span class="text-sm font-medium">21,893</span>
+          </div>
+          <div class="w-full bg-gray-200 rounded-full h-2">
+            <div class="bg-yellow-500 h-2 rounded-full" style="width: 10%"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Transactions and Recent Customers -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mt-8">
+      <!-- Transactions -->
+      <div class="bg-white p-6 rounded-lg shadow-sm">
+        <div class="flex items-center justify-between mb-6">
+          <h2 class="text-lg font-semibold text-gray-800">Transactions</h2>
+          <a href="#" class="text-blue-500 text-sm hover:underline">See All Transactions →</a>
+        </div>
+        <div class="space-y-4">
+          <div class="flex items-center justify-between p-4 border-l-4 border-green-500 bg-green-50">
+            <div class="flex items-center">
+              <div class="w-2 h-2 bg-green-500 rounded-full mr-3"></div>
+              <div>
+                <div class="font-medium text-sm">Visa card ****4831</div>
+                <div class="text-xs text-gray-500">Card payment</div>
+              </div>
+            </div>
+            <div class="text-right">
+              <div class="font-medium text-sm">$182.94</div>
+              <div class="text-xs text-gray-500">Jan 17, 2022</div>
+            </div>
+            <div class="text-xs text-gray-500">Amazon</div>
+          </div>
+
+          <div class="flex items-center justify-between p-4 border-l-4 border-green-500 bg-green-50">
+            <div class="flex items-center">
+              <div class="w-2 h-2 bg-green-500 rounded-full mr-3"></div>
+              <div>
+                <div class="font-medium text-sm">Mastercard ****6442</div>
+                <div class="text-xs text-gray-500">Card payment</div>
+              </div>
+            </div>
+            <div class="text-right">
+              <div class="font-medium text-sm">$99.00</div>
+              <div class="text-xs text-gray-500">Jan 17, 2022</div>
+            </div>
+            <div class="text-xs text-gray-500">Facebook</div>
+          </div>
+
+          <div class="flex items-center justify-between p-4 border-l-4 border-yellow-500 bg-yellow-50">
+            <div class="flex items-center">
+              <div class="w-2 h-2 bg-yellow-500 rounded-full mr-3"></div>
+              <div>
+                <div class="font-medium text-sm">Account ****882</div>
+                <div class="text-xs text-gray-500">Bank payment</div>
+              </div>
+            </div>
+            <div class="text-right">
+              <div class="font-medium text-sm">$249.94</div>
+              <div class="text-xs text-gray-500">Jan 17, 2022</div>
+            </div>
+            <div class="text-xs text-gray-500">Netflix</div>
+          </div>
+
+          <div class="flex items-center justify-between p-4 border-l-4 border-red-500 bg-red-50">
+            <div class="flex items-center">
+              <div class="w-2 h-2 bg-red-500 rounded-full mr-3"></div>
+              <div>
+                <div class="font-medium text-sm">Amex card ****5666</div>
+                <div class="text-xs text-gray-500">Card payment</div>
+              </div>
+            </div>
+            <div class="text-right">
+              <div class="font-medium text-sm">$199.24</div>
+              <div class="text-xs text-gray-500">Jan 17, 2022</div>
+            </div>
+            <div class="text-xs text-gray-500">Amazon Prime</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Recent Customers -->
+      <div class="bg-white p-6 rounded-lg shadow-sm">
+        <div class="flex items-center justify-between mb-6">
+          <h2 class="text-lg font-semibold text-gray-800">Recent Customers</h2>
+          <a th:href="@{/customers}" class="text-blue-500 text-sm hover:underline">SEE ALL CUSTOMERS →</a>
+        </div>
+
+        <div class="space-y-4">
+          <div th:each="customer : ${customers}" class="flex items-center justify-between">
+            <div class="flex items-center">
+              <div class="w-10 h-10 bg-blue-500 rounded-full flex items-center justify-center text-white font-medium text-sm mr-3">
+                <span th:text="${#strings.substring(customer.name, 0, 1)} + ${#strings.substring(customer.name, customer.name.indexOf(' ') + 1, customer.name.indexOf(' ') + 2)}">CU</span>
+              </div>
+              <div>
+                <div class="font-medium text-sm" th:text="${customer.name}">Tên khách</div>
+                <div class="text-xs text-gray-500" th:text="${customer.email}">email@example.com</div>
+              </div>
+            </div>
+            <div class="text-right">
+              <div class="font-medium text-sm" th:text="${customer.phone}">0123456789</div>
+              <div class="text-xs text-gray-500" th:text="${customer.address}">Địa chỉ</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
     </div>
   </div>
 </div>
 
+<script>
+  // Sales Chart
+  const ctx = document.getElementById('salesChart').getContext('2d');
+  const salesChart = new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels: ['Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec', 'Jan'],
+      datasets: [{
+        label: 'Sales',
+        // [[${}]]
+        data: [25000, 30000, 35000, 40000, 45591, 42000, 47000, 50000, 52000, 55000, 58000, 60000],
+        borderColor: '#3B82F6',
+        backgroundColor: 'rgba(59, 130, 246, 0.1)',
+        borderWidth: 2,
+        fill: true,
+        tension: 0.4,
+        pointBackgroundColor: '#3B82F6',
+        pointBorderColor: '#fff',
+        pointBorderWidth: 2,
+        pointRadius: 4,
+        pointHoverRadius: 6
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: {
+          display: false
+        }
+      },
+      scales: {
+        x: {
+          grid: {
+            display: false
+          },
+          ticks: {
+            color: '#6B7280'
+          }
+        },
+        y: {
+          grid: {
+            color: 'rgba(0, 0, 0, 0.1)'
+          },
+          ticks: {
+            display: false
+          }
+        }
+      },
+      elements: {
+        point: {
+          hoverRadius: 8
+        }
+      }
+    }
+  });
+</script>
 </body>
 </html>

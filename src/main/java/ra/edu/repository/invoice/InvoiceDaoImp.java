@@ -5,6 +5,7 @@ import org.hibernate.SessionFactory;
 import org.hibernate.query.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
+import ra.edu.dto.RevenueDTO;
 import ra.edu.entity.Invoice;
 
 import java.util.ArrayList;
@@ -166,5 +167,118 @@ public class InvoiceDaoImp implements InvoiceDao {
             if (session != null) session.close();
         }
         return count;
+    }
+
+    @Override
+    public List<Invoice> findByCustomerName(String name) {
+        Session session = null;
+        List<Invoice> invoices = new ArrayList<>();
+        try {
+            session = sessionFactory.openSession();
+            String hql = "FROM Invoice i WHERE i.customer.name LIKE :name";
+            Query<Invoice> query = session.createQuery(hql, Invoice.class);
+            query.setParameter("name", "%" + name + "%");
+            invoices = query.getResultList();
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            if (session != null) session.close();
+        }
+        return invoices;
+    }
+
+    @Override
+    public boolean updateTotalAmount(int invoiceId) {
+        Session session = null;
+        try {
+            session = sessionFactory.openSession();
+            session.beginTransaction();
+            String hql = "UPDATE Invoice i SET i.totalAmount = (SELECT SUM(id.unitPrice * id.quantity) FROM InvoiceDetail id WHERE id.invoice.id = :invoiceId) WHERE i.id = :invoiceId";
+            int updatedRows = session.createQuery(hql)
+                    .setParameter("invoiceId", invoiceId)
+                    .executeUpdate();
+            session.getTransaction().commit();
+            return updatedRows > 0;
+        } catch (Exception e) {
+            if (session != null && session.getTransaction() != null) {
+                session.getTransaction().rollback();
+            }
+            e.printStackTrace();
+            return false;
+        } finally {
+            if (session != null) session.close();
+        }
+
+    }
+
+    @Override
+    public List<Invoice> findByTime(int date, int month, int year) {
+        Session session = null;
+        List<Invoice> invoices = new ArrayList<>();
+        try {
+            session = sessionFactory.openSession();
+            String hql = "FROM Invoice i WHERE DAY(i.createdAt) = :date AND MONTH(i.createdAt) = :month AND YEAR(i.createdAt) = :year";
+            Query<Invoice> query = session.createQuery(hql, Invoice.class);
+            query.setParameter("date", date);
+            query.setParameter("month", month);
+            query.setParameter("year", year);
+            invoices = query.getResultList();
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            if (session != null) session.close();
+        }
+        return invoices;
+    }
+
+    @Override
+    public List<RevenueDTO> revenueByDay() {
+        Session session = null;
+        List<RevenueDTO> revenueList = new ArrayList<>();
+        try {
+            session = sessionFactory.openSession();
+            String hql = "SELECT new ra.edu.dto.RevenueDTO(DAY(i.createdAt), SUM(i.totalAmount)) FROM Invoice i GROUP BY DAY(i.createdAt)";
+            Query<RevenueDTO> query = session.createQuery(hql, RevenueDTO.class);
+            revenueList = query.getResultList();
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            if (session != null) session.close();
+        }
+        return revenueList;
+    }
+
+    @Override
+    public List<RevenueDTO> revenueByMonth() {
+        Session session = null;
+        List<RevenueDTO> revenueList = new ArrayList<>();
+        try {
+            session = sessionFactory.openSession();
+            String hql = "SELECT new ra.edu.dto.RevenueDTO(MONTH(i.createdAt), SUM(i.totalAmount)) FROM Invoice i GROUP BY MONTH(i.createdAt)";
+            Query<RevenueDTO> query = session.createQuery(hql, RevenueDTO.class);
+            revenueList = query.getResultList();
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            if (session != null) session.close();
+        }
+        return revenueList;
+    }
+
+    @Override
+    public List<RevenueDTO> revenueByYear() {
+        Session session = null;
+        List<RevenueDTO> revenueList = new ArrayList<>();
+        try {
+            session = sessionFactory.openSession();
+            String hql = "SELECT new ra.edu.dto.RevenueDTO(YEAR(i.createdAt), SUM(i.totalAmount)) FROM Invoice i GROUP BY YEAR(i.createdAt)";
+            Query<RevenueDTO> query = session.createQuery(hql, RevenueDTO.class);
+            revenueList = query.getResultList();
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            if (session != null) session.close();
+        }
+        return revenueList;
     }
 }
