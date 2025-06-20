@@ -15,4 +15,14 @@ public class InvoiceDetailDTO {
     @Min(value = 1, message = "Số lượng phải lớn hơn 0")
     private int quantity;
     private BigDecimal unitPrice;
+
+    private BigDecimal total;
+
+    public void calculateTotal() {
+        if (unitPrice != null && quantity > 0) {
+            this.total = unitPrice.multiply(BigDecimal.valueOf(quantity));
+        } else {
+            this.total = BigDecimal.ZERO;
+        }
+    }
 }

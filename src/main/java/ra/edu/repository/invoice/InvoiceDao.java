@@ -2,6 +2,7 @@ package ra.edu.repository.invoice;
 
 import ra.edu.dto.RevenueDTO;
 import ra.edu.entity.Invoice;
+import ra.edu.utils.InvoiceStatus;
 
 import java.util.List;
 
@@ -19,4 +20,6 @@ public interface InvoiceDao {
     List<RevenueDTO> revenueByDay();
     List<RevenueDTO> revenueByMonth();
     List<RevenueDTO> revenueByYear();
+    void updateStatus(int id, InvoiceStatus status);
+
 }

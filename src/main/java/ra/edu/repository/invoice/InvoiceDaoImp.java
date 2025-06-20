@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import ra.edu.dto.RevenueDTO;
 import ra.edu.entity.Invoice;
+import ra.edu.utils.InvoiceStatus;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -280,5 +281,30 @@ public class InvoiceDaoImp implements InvoiceDao {
             if (session != null) session.close();
         }
         return revenueList;
+    }
+
+    @Override
+    public void updateStatus(int id, InvoiceStatus status) {
+        Session session = null;
+        try {
+            session = sessionFactory.openSession();
+            session.beginTransaction();
+            String hql = "UPDATE Invoice i SET i.status = :status WHERE i.id = :id";
+            int updatedRows = session.createQuery(hql)
+                    .setParameter("status", status)
+                    .setParameter("id", id)
+                    .executeUpdate();
+            session.getTransaction().commit();
+            if (updatedRows == 0) {
+                throw new RuntimeException("No invoice found with id: " + id);
+            }
+        } catch (Exception e) {
+            if (session != null && session.getTransaction() != null) {
+                session.getTransaction().rollback();
+            }
+            e.printStackTrace();
+        } finally {
+            if (session != null) session.close();
+        }
     }
 }

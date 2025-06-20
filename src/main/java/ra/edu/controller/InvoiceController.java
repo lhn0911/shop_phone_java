@@ -60,11 +60,15 @@ public class InvoiceController {
         // Tạo DTO cho form thêm hóa đơn
         InvoiceDTO invoiceDTO = new InvoiceDTO();
         List<InvoiceDetailDTO> detailDTOList = new ArrayList<>();
+        // Trong InvoiceController.listInvoices()
         for (Product p : products) {
             InvoiceDetailDTO d = new InvoiceDetailDTO();
             d.setProductId(p.getId());
             d.setQuantity(0);
             d.setUnitPrice(BigDecimal.valueOf(p.getPrice()));
+
+            // ✅ Tính total trước
+            d.setTotal(BigDecimal.ZERO); // Thêm field total vào InvoiceDetailDTO
 
             detailDTOList.add(d);
         }
@@ -128,4 +132,5 @@ public class InvoiceController {
 
         return "redirect:/invoices";
     }
+
 }

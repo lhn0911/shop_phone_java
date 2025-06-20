@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ra.edu.entity.Invoice;
 import ra.edu.repository.invoice.InvoiceDao;
+import ra.edu.utils.InvoiceStatus;
 
 import java.util.List;
 
@@ -31,6 +32,11 @@ public class InvoiceServiceImp implements InvoiceService{
     @Override
     public void update(Invoice invoice) {
         invoiceDao.update(invoice);
+    }
+
+    @Override
+    public void updateStatus(int id, InvoiceStatus status) {
+        invoiceDao.updateStatus(id, status);
     }
 
     @Override

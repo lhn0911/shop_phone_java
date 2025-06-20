@@ -1,6 +1,7 @@
 package ra.edu.service.invoice;
 
 import ra.edu.entity.Invoice;
+import ra.edu.utils.InvoiceStatus;
 
 import java.util.List;
 
@@ -9,7 +10,7 @@ public interface InvoiceService {
     Invoice findById(int id);
     Invoice save(Invoice invoice);
     void update(Invoice invoice);
-
+    void updateStatus(int id, InvoiceStatus status);
     List<Invoice> findByFilter(Integer customerId, String startDate, String endDate, int page, int size);
     long countByFilter(Integer customerId, String startDate, String endDate);
 
