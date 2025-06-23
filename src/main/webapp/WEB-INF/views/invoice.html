@@ -52,15 +52,23 @@
                 </td>
                 <td class="py-3 px-4 border-b text-right" th:text="${#numbers.formatDecimal(invoice.totalAmount, 0, 'COMMA', 2, 'POINT')} + ' $'">1,200 $</td>
                 <td class="py-3 px-4 border-b text-center space-x-2">
-                    <!-- Edit -->
-                    <a th:href="@{/invoices/edit/{id}(id=${invoice.id})}" class="text-blue-500 hover:underline">
+                    <button
+                            type="button"
+                            class="text-blue-500 hover:underline"
+                            th:attr="data-id=${invoice.id}, data-status=${invoice.status}"
+                            onclick="handleOpenEdit(this)">
                         <i class="fa-solid fa-pen"></i>
-                    </a>
-                    <!-- View -->
-                    <a th:href="@{/invoices/view/{id}(id=${invoice.id})}" class="text-purple-500 hover:underline">
+                    </button>
+
+                    <!-- Updated View Button to open modal instead of navigation -->
+                    <button type="button"
+                            class="text-purple-500 hover:underline"
+                            th:attr="data-invoice-id=${invoice.id}"
+                            onclick="viewInvoiceDetail(this)">
                         <i class="fa-solid fa-eye"></i>
-                    </a>
+                    </button>
                 </td>
+
             </tr>
             </tbody>
         </table>
@@ -83,12 +91,71 @@
                   class="px-3 py-1 border rounded text-gray-400 cursor-not-allowed">&raquo;</span>
         </div>
     </div>
+
     <!-- Modal thêm hóa đơn -->
     <div th:replace="addInvoice :: add-modal"></div>
-<!--    <div th:replace="editInvoice :: edit-modal"></div>-->
+    <div th:replace="editInvoice :: edit-modal"></div>
+
+    <!-- Invoice Detail Modal -->
+    <div id="invoiceDetailModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden">
+        <div class="flex justify-center items-center min-h-screen p-4">
+            <div class="bg-white rounded-lg shadow-xl max-w-6xl w-full max-h-screen overflow-y-auto">
+                <div id="invoiceDetailContent">
+                    <!-- Content will be loaded here -->
+                </div>
+            </div>
+        </div>
+    </div>
 
     <!-- Script xử lý -->
     <div th:replace="scriptInvoice :: scripts"></div>
+
+    <!-- Additional Script for Invoice Detail Modal -->
+    <script>
+        function viewInvoiceDetail(button) {
+            const invoiceId = button.getAttribute('data-invoice-id');
+
+            // Show loading
+            const modal = document.getElementById('invoiceDetailModal');
+            const content = document.getElementById('invoiceDetailContent');
+            content.innerHTML = '<div class="p-8 text-center"><i class="fa-solid fa-spinner fa-spin text-2xl"></i><p class="mt-2">Đang tải...</p></div>';
+            modal.classList.remove('hidden');
+
+            // Fetch invoice detail
+            fetch(`/invoices/detail/${invoiceId}`)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.text();
+                })
+                .then(html => {
+                    content.innerHTML = html;
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    content.innerHTML = '<div class="p-8 text-center text-red-600"><i class="fa-solid fa-exclamation-triangle text-2xl"></i><p class="mt-2">Có lỗi xảy ra khi tải dữ liệu!</p></div>';
+                });
+        }
+
+        function closeInvoiceDetailModal() {
+            document.getElementById('invoiceDetailModal').classList.add('hidden');
+        }
+
+        // Close modal when clicking outside
+        document.getElementById('invoiceDetailModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeInvoiceDetailModal();
+            }
+        });
+
+        // Close modal with Escape key
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                closeInvoiceDetailModal();
+            }
+        });
+    </script>
 </div>
 </body>
 </html>

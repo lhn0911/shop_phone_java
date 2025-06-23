@@ -11,8 +11,12 @@ public interface InvoiceDao {
     Invoice findById(int id);
     void save(Invoice invoice);
     void update(Invoice invoice);
-    List<Invoice> findByFilter(Integer customerId, String startDate, String endDate, int page, int size);
-    long countByFilter(Integer customerId, String startDate, String endDate);
+    List<Invoice> findByFilter(Integer customerId, String status, String startDate, String endDate,
+                               Double minAmount, Double maxAmount, int page, int size);
+
+    long countByFilter(Integer customerId, String status, String startDate, String endDate,
+                       Double minAmount, Double maxAmount);
+
     long count();
     List<Invoice> findByCustomerName(String name);
     boolean updateTotalAmount(int invoiceId);

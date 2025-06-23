@@ -13,21 +13,26 @@
     <h2 class="text-2xl font-bold text-orange-500 mb-10">Mobile <span class="text-black">SHOP</span></h2>
 
     <nav class="flex-1 space-y-3">
-      <a th:href="@{/dashboard}" class="flex items-center px-4 py-2 rounded bg-orange-500 text-white">
+      <a th:href="@{/dashboard}"
+         th:class="${#httpServletRequest.requestURI.contains('/dashboard') ? 'flex items-center px-4 py-2 rounded bg-orange-500 text-white' : 'flex items-center px-4 py-2 rounded hover:bg-gray-200'}">
         <span>📊 Dashboard</span>
       </a>
-      <a th:href="@{/customers}" class="flex items-center px-4 py-2 rounded hover:bg-gray-200">
+      <a th:href="@{/customers}"
+         th:class="${#httpServletRequest.requestURI.contains('/customers') ? 'flex items-center px-4 py-2 rounded bg-orange-500 text-white' : 'flex items-center px-4 py-2 rounded hover:bg-gray-200'}">
         <span>👤 Khách hàng</span>
       </a>
-      <a th:href="@{/products}" class="flex items-center px-4 py-2 rounded hover:bg-gray-200">
+      <a th:href="@{/products}"
+         th:class="${#httpServletRequest.requestURI.contains('/products') ? 'flex items-center px-4 py-2 rounded bg-orange-500 text-white' : 'flex items-center px-4 py-2 rounded hover:bg-gray-200'}">
         <span>📱 Sản phẩm</span>
       </a>
-      <a th:href="@{/invoices}" class="flex items-center px-4 py-2 rounded hover:bg-gray-200">
+      <a th:href="@{/invoices}"
+         th:class="${#httpServletRequest.requestURI.contains('/invoices') ? 'flex items-center px-4 py-2 rounded bg-orange-500 text-white' : 'flex items-center px-4 py-2 rounded hover:bg-gray-200'}">
         <span>🧾 Đơn hàng</span>
       </a>
-<!--      <a th:href="@{/revenue}" class="flex items-center px-4 py-2 rounded hover:bg-gray-200">-->
-<!--        <span>🧾 Thống kê</span>-->
-<!--      </a>-->
+      <!--      <a th:href="@{/revenue}" -->
+      <!--         th:class="${#httpServletRequest.requestURI.contains('/revenue') ? 'flex items-center px-4 py-2 rounded bg-orange-500 text-white' : 'flex items-center px-4 py-2 rounded hover:bg-gray-200'}">-->
+      <!--        <span>🧾 Thống kê</span>-->
+      <!--      </a>-->
     </nav>
 
     <!-- Auth Info -->

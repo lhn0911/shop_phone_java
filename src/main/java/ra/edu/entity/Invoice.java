@@ -27,8 +27,9 @@ public class Invoice {
     private BigDecimal totalAmount;
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false, columnDefinition = "ENUM('PENDING', 'CONFIRMING', 'SHIPPING', 'COMPLETED', 'CANCELED') DEFAULT 'PENDING'")
+    @Column(name = "status", nullable = false, length = 20)
     private InvoiceStatus status = InvoiceStatus.PENDING;
+
     @OneToMany(mappedBy = "invoice", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<InvoiceDetail> invoiceDetails;
 

@@ -14,7 +14,7 @@ import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 
 @Controller
-public class LoginController init{
+public class LoginController{
 
     @Autowired
     private AdminService adminService;

@@ -1,5 +1,6 @@
 package ra.edu.service.invoice;
 
+import ra.edu.dto.RevenueDTO;
 import ra.edu.entity.Invoice;
 import ra.edu.utils.InvoiceStatus;
 
@@ -10,10 +11,19 @@ public interface InvoiceService {
     Invoice findById(int id);
     Invoice save(Invoice invoice);
     void update(Invoice invoice);
-    void updateStatus(int id, InvoiceStatus status);
-    List<Invoice> findByFilter(Integer customerId, String startDate, String endDate, int page, int size);
-    long countByFilter(Integer customerId, String startDate, String endDate);
+    List<Invoice> findByFilter(Integer customerId, String status, String startDate, String endDate,
+                               Double minAmount, Double maxAmount, int page, int size);
+
+    long countByFilter(Integer customerId, String status, String startDate, String endDate,
+                       Double minAmount, Double maxAmount);
 
     long count();
+    List<Invoice> findByCustomerName(String name);
+    boolean updateTotalAmount(int invoiceId);
+    List<Invoice> findByTime(int date, int month, int year);
+    List<RevenueDTO> revenueByDay();
+    List<RevenueDTO> revenueByMonth();
+    List<RevenueDTO> revenueByYear();
+    void updateStatus(int id, InvoiceStatus status);
 
 }

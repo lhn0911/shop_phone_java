@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import ra.edu.dto.InvoiceDTO;
 import ra.edu.dto.InvoiceDetailDTO;
 import ra.edu.entity.Customer;
@@ -39,37 +40,36 @@ public class InvoiceController {
                                @RequestParam(defaultValue = "1") int page,
                                @RequestParam(defaultValue = "5") int size,
                                @RequestParam(required = false) Integer customerId,
+                               @RequestParam(required = false) String status,
                                @RequestParam(required = false) String startDate,
                                @RequestParam(required = false) String endDate,
+                               @RequestParam(required = false) Double minAmount,
+                               @RequestParam(required = false) Double maxAmount,
                                Model model) {
         if (session.getAttribute("admin") == null) {
             return "redirect:/login";
         }
 
-        List<Invoice> invoices = invoiceService.findByFilter(customerId, startDate, endDate, page, size);
-        long totalItems = invoiceService.countByFilter(customerId, startDate, endDate);
+        List<Invoice> invoices = invoiceService.findByFilter(
+                customerId, status, startDate, endDate, minAmount, maxAmount, page, size);
+
+        long totalItems = invoiceService.countByFilter(
+                customerId, status, startDate, endDate, minAmount, maxAmount);
         int totalPages = (int) Math.ceil((double) totalItems / size);
 
         List<Customer> customers = customerService.findAll(1, Integer.MAX_VALUE);
         List<Product> products = productService.find_all(1, Integer.MAX_VALUE);
-
-        // ⚠ Map productId → Product để Thymeleaf lookup nhanh
         Map<Integer, Product> productMap = products.stream()
                 .collect(Collectors.toMap(Product::getId, p -> p));
 
-        // Tạo DTO cho form thêm hóa đơn
         InvoiceDTO invoiceDTO = new InvoiceDTO();
         List<InvoiceDetailDTO> detailDTOList = new ArrayList<>();
-        // Trong InvoiceController.listInvoices()
         for (Product p : products) {
             InvoiceDetailDTO d = new InvoiceDetailDTO();
             d.setProductId(p.getId());
             d.setQuantity(0);
             d.setUnitPrice(BigDecimal.valueOf(p.getPrice()));
-
-            // ✅ Tính total trước
-            d.setTotal(BigDecimal.ZERO); // Thêm field total vào InvoiceDetailDTO
-
+            d.setTotal(BigDecimal.ZERO);
             detailDTOList.add(d);
         }
         invoiceDTO.setInvoiceDetails(detailDTOList);
@@ -77,17 +77,22 @@ public class InvoiceController {
         model.addAttribute("invoices", invoices);
         model.addAttribute("customers", customers);
         model.addAttribute("products", products);
-        model.addAttribute("productMap", productMap); // ✅ Thêm vào model
+        model.addAttribute("productMap", productMap);
         model.addAttribute("invoiceDTO", invoiceDTO);
         model.addAttribute("currentPage", page);
         model.addAttribute("totalPages", totalPages);
         model.addAttribute("page", "invoice");
+
         model.addAttribute("customerId", customerId);
+        model.addAttribute("status", status);
         model.addAttribute("startDate", startDate);
         model.addAttribute("endDate", endDate);
+        model.addAttribute("minAmount", minAmount);
+        model.addAttribute("maxAmount", maxAmount);
 
         return "layout";
     }
+
 
     @PostMapping("/add")
     public String addInvoice(@ModelAttribute InvoiceDTO invoiceDTO) {
@@ -132,5 +137,31 @@ public class InvoiceController {
 
         return "redirect:/invoices";
     }
+    @PostMapping("/edit")
+    public String updateInvoiceStatus(@RequestParam("id") int id,
+                                      @RequestParam("status") String status,
+                                      RedirectAttributes redirectAttributes) {
+        Invoice invoice = invoiceService.findById(id);
+        if (invoice == null) {
+            redirectAttributes.addFlashAttribute("error", "Không tìm thấy hóa đơn cần cập nhật.");
+            return "redirect:/invoices";
+        }
+
+        try {
+            InvoiceStatus newStatus = InvoiceStatus.valueOf(status.toUpperCase());
+            invoice.setStatus(newStatus);
+            invoiceService.update(invoice);
+            redirectAttributes.addFlashAttribute("success", "Cập nhật trạng thái hóa đơn thành công.");
+        } catch (IllegalArgumentException ex) {
+            redirectAttributes.addFlashAttribute("error", "Trạng thái không hợp lệ.");
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("error", "Đã xảy ra lỗi khi cập nhật.");
+        }
+
+        return "redirect:/invoices";
+    }
+
+
+
 
 }

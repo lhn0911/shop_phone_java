@@ -9,7 +9,9 @@ import ra.edu.dto.RevenueDTO;
 import ra.edu.entity.Invoice;
 import ra.edu.utils.InvoiceStatus;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 @Repository
@@ -85,7 +87,10 @@ public class InvoiceDaoImp implements InvoiceDao {
     }
 
     @Override
-    public List<Invoice> findByFilter(Integer customerId, String startDate, String endDate, int page, int size) {
+    public List<Invoice> findByFilter(Integer customerId, String status,
+                                      String startDate, String endDate,
+                                      Double minAmount, Double maxAmount,
+                                      int page, int size) {
         Session session = null;
         List<Invoice> invoices = new ArrayList<>();
         try {
@@ -95,8 +100,23 @@ public class InvoiceDaoImp implements InvoiceDao {
             if (customerId != null) {
                 hql.append(" AND i.customer.id = :customerId");
             }
-            if (startDate != null && !startDate.isEmpty() && endDate != null && !endDate.isEmpty()) {
-                hql.append(" AND i.date  BETWEEN :startDate AND :endDate");
+
+            if (status != null && !status.isEmpty()) {
+                hql.append(" AND i.status = :status");
+            }
+
+            boolean hasDateFilter = startDate != null && !startDate.isEmpty()
+                    && endDate != null && !endDate.isEmpty();
+            if (hasDateFilter) {
+                hql.append(" AND i.createdAt BETWEEN :startDate AND :endDate");
+            }
+
+            if (minAmount != null) {
+                hql.append(" AND i.totalAmount >= :minAmount");
+            }
+
+            if (maxAmount != null) {
+                hql.append(" AND i.totalAmount <= :maxAmount");
             }
 
             Query<Invoice> query = session.createQuery(hql.toString(), Invoice.class);
@@ -104,9 +124,25 @@ public class InvoiceDaoImp implements InvoiceDao {
             if (customerId != null) {
                 query.setParameter("customerId", customerId);
             }
-            if (startDate != null && !startDate.isEmpty() && endDate != null && !endDate.isEmpty()) {
-                query.setParameter("startDate", startDate);
-                query.setParameter("endDate", endDate);
+
+            if (status != null && !status.isEmpty()) {
+                query.setParameter("status", InvoiceStatus.valueOf(status));
+            }
+
+            if (hasDateFilter) {
+                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+                Date start = sdf.parse(startDate);
+                Date end = sdf.parse(endDate);
+                query.setParameter("startDate", start);
+                query.setParameter("endDate", end);
+            }
+
+            if (minAmount != null) {
+                query.setParameter("minAmount", java.math.BigDecimal.valueOf(minAmount));
+            }
+
+            if (maxAmount != null) {
+                query.setParameter("maxAmount", java.math.BigDecimal.valueOf(maxAmount));
             }
 
             query.setFirstResult((page - 1) * size);
@@ -121,7 +157,9 @@ public class InvoiceDaoImp implements InvoiceDao {
     }
 
     @Override
-    public long countByFilter(Integer customerId, String startDate, String endDate) {
+    public long countByFilter(Integer customerId, String status,
+                              String startDate, String endDate,
+                              Double minAmount, Double maxAmount) {
         Session session = null;
         long count = 0;
         try {
@@ -131,8 +169,23 @@ public class InvoiceDaoImp implements InvoiceDao {
             if (customerId != null) {
                 hql.append(" AND i.customer.id = :customerId");
             }
-            if (startDate != null && !startDate.isEmpty() && endDate != null && !endDate.isEmpty()) {
-                hql.append(" AND i.date BETWEEN :startDate AND :endDate");
+
+            if (status != null && !status.isEmpty()) {
+                hql.append(" AND i.status = :status");
+            }
+
+            boolean hasDateFilter = startDate != null && !startDate.isEmpty()
+                    && endDate != null && !endDate.isEmpty();
+            if (hasDateFilter) {
+                hql.append(" AND i.createdAt BETWEEN :startDate AND :endDate");
+            }
+
+            if (minAmount != null) {
+                hql.append(" AND i.totalAmount >= :minAmount");
+            }
+
+            if (maxAmount != null) {
+                hql.append(" AND i.totalAmount <= :maxAmount");
             }
 
             Query<Long> query = session.createQuery(hql.toString(), Long.class);
@@ -140,9 +193,25 @@ public class InvoiceDaoImp implements InvoiceDao {
             if (customerId != null) {
                 query.setParameter("customerId", customerId);
             }
-            if (startDate != null && !startDate.isEmpty() && endDate != null && !endDate.isEmpty()) {
-                query.setParameter("startDate", startDate);
-                query.setParameter("endDate", endDate);
+
+            if (status != null && !status.isEmpty()) {
+                query.setParameter("status", InvoiceStatus.valueOf(status));
+            }
+
+            if (hasDateFilter) {
+                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+                Date start = sdf.parse(startDate);
+                Date end = sdf.parse(endDate);
+                query.setParameter("startDate", start);
+                query.setParameter("endDate", end);
+            }
+
+            if (minAmount != null) {
+                query.setParameter("minAmount", java.math.BigDecimal.valueOf(minAmount));
+            }
+
+            if (maxAmount != null) {
+                query.setParameter("maxAmount", java.math.BigDecimal.valueOf(maxAmount));
             }
 
             count = query.uniqueResult();

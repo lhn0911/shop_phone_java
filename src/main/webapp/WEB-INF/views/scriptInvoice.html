@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <body>
-
 <div th:fragment="scripts">
   <script th:inline="javascript">
+    // --- ADD INVOICE MODAL ---
     function openAddInvoiceModal() {
       document.getElementById('addInvoiceModal').classList.remove('hidden');
       updateGrandTotal(); // Tính lại tổng khi mở modal
@@ -32,7 +32,6 @@
 
       updateGrandTotal();
     }
-
 
     function updateGrandTotal() {
       let grandTotal = 0;
@@ -70,22 +69,104 @@
         updateGrandTotal();
       }
     }
+    // --- EDIT INVOICE MODAL ---
+    function handleOpenEdit(button) {
+      const id = button.getAttribute('data-id');
+      // const customerName = button.getAttribute('data-customer');
+      // const totalAmount = button.getAttribute('data-total');
+      // const createdDate = button.getAttribute('data-date');
+      const currentStatus = button.getAttribute('data-status');
+
+      document.getElementById('editInvoiceForm').action = `/invoices/edit`;
+      document.getElementById('editInvoiceId').value = id;
+      // document.getElementById('editCustomerName').textContent = customerName;
+      // document.getElementById('editTotalAmount').textContent = totalAmount;
+      // document.getElementById('editCreatedDate').textContent = createdDate;
+      document.getElementById('currentStatusDisplay').innerHTML = getStatusBadge(currentStatus);
+      document.getElementById('newStatus').value = currentStatus;
+      // document.getElementById('statusNote').value = '';
+      const statusSelect = document.getElementById('newStatus');
+// Bật lại hết các option
+      Array.from(statusSelect.options).forEach(opt => opt.disabled = false);
+
+// Ánh xạ các trạng thái cần disable theo trạng thái hiện tại
+      const disableMap = {
+        'PENDING': [],
+        'CONFIRMING': ['PENDING'],
+        'SHIPPING': ['PENDING', 'CONFIRMING'],
+        'COMPLETED': ['PENDING', 'CONFIRMING', 'SHIPPING', 'CANCELED'],
+        'CANCELED': ['PENDING', 'CONFIRMING', 'SHIPPING', 'COMPLETED']
+      };
+
+      const toDisable = disableMap[currentStatus] || [];
+      toDisable.forEach(value => {
+        const opt = statusSelect.querySelector(`option[value='${value}']`);
+        if (opt) opt.disabled = true;
+      });
+
+      document.getElementById('editInvoiceModal').classList.remove('hidden');
+    }
 
 
-    // Khởi tạo khi trang load
-    document.addEventListener('DOMContentLoaded', function() {
+    function closeEditInvoiceModal() {
+      document.getElementById('editInvoiceModal').classList.add('hidden');
+      document.getElementById('editInvoiceForm').reset();
+    }
+
+    function getStatusBadge(status) {
+      const statusClasses = {
+        'PENDING': 'bg-yellow-300 text-yellow-900',
+        'CONFIRMING': 'bg-purple-300 text-purple-900',
+        'SHIPPING': 'bg-blue-300 text-blue-900',
+        'COMPLETED': 'bg-green-300 text-green-900',
+        'CANCELED': 'bg-red-300 text-red-900'
+      };
+      const className = statusClasses[status] || 'bg-gray-300 text-gray-900';
+      return `<span class="${className} text-sm font-semibold px-2 py-1 rounded">${status}</span>`;
+    }
+
+    // --- INIT ---
+    document.addEventListener('DOMContentLoaded', function () {
       console.log('Page loaded, updating grand total');
       updateGrandTotal();
 
-      // Debug: Kiểm tra data-price của các cell
       const priceCells = document.querySelectorAll('[id^="price-"]');
       priceCells.forEach((cell, index) => {
         console.log(`Price cell ${index}: data-price = ${cell.dataset.price}`);
       });
+
+      const editForm = document.getElementById('editInvoiceForm');
+      if (editForm) {
+        editForm.addEventListener('submit', function (e) {
+          const newStatus = document.getElementById('newStatus').value;
+          if (!newStatus) {
+            e.preventDefault();
+            alert('Vui lòng chọn trạng thái mới!');
+          }
+        });
+      }
+
+      document.addEventListener('click', function (e) {
+        const modal = document.getElementById('editInvoiceModal');
+        if (e.target === modal) {
+          closeEditInvoiceModal();
+        }
+      });
+
+      document.addEventListener('keydown', function (e) {
+        if (e.key === 'Escape') {
+          const modal = document.getElementById('editInvoiceModal');
+          if (!modal.classList.contains('hidden')) {
+            closeEditInvoiceModal();
+          }
+        }
+      });
     });
+    function resetFilters() {
+      window.location.href = '/invoices';
+    }
 
   </script>
 </div>
-
 </body>
 </html>
