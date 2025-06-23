@@ -14,7 +14,7 @@ import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 
 @Controller
-public class LoginController {
+public class LoginController init{
 
     @Autowired
     private AdminService adminService;
@@ -48,7 +48,7 @@ public class LoginController {
         if (admin != null) {
             session.setAttribute("admin", admin);
             redirectAttributes.addFlashAttribute("message", "Đăng nhập thành công");
-            return "redirect:/";
+            return "redirect:/dashboard";
         } else {
             result.rejectValue("username", "invalid", "Sai tên đăng nhập hoặc mật khẩu");
             return "login";
