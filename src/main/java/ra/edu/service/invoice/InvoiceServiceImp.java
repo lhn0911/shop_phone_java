@@ -41,6 +41,11 @@ public class InvoiceServiceImp implements InvoiceService{
     }
 
     @Override
+    public double totalRevenue() {
+        return invoiceDao.totalRevenue();
+    }
+
+    @Override
     public List<Invoice> findByFilter(Integer customerId, String status, String startDate, String endDate, Double minAmount, Double maxAmount, int page, int size) {
         return invoiceDao.findByFilter(customerId, status, startDate, endDate, minAmount, maxAmount, page, size);
     }

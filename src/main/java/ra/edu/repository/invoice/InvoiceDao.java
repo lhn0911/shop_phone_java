@@ -25,5 +25,5 @@ public interface InvoiceDao {
     List<RevenueDTO> revenueByMonth();
     List<RevenueDTO> revenueByYear();
     void updateStatus(int id, InvoiceStatus status);
-
+    double totalRevenue();
 }

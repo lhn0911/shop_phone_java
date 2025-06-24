@@ -9,6 +9,7 @@ import ra.edu.dto.RevenueDTO;
 import ra.edu.entity.Invoice;
 import ra.edu.utils.InvoiceStatus;
 
+import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -375,5 +376,34 @@ public class InvoiceDaoImp implements InvoiceDao {
         } finally {
             if (session != null) session.close();
         }
+    }
+
+    @Override
+    public double totalRevenue() {
+        Session session = null;
+        double totalRevenue = 0.0;
+        try {
+            session = sessionFactory.openSession();
+            String hql = "SELECT SUM(i.totalAmount) FROM Invoice i WHERE i.totalAmount IS NOT NULL";
+            Query query = session.createQuery(hql);
+            Object result = query.uniqueResult();
+
+            if (result != null) {
+                if (result instanceof BigDecimal) {
+                    totalRevenue = ((BigDecimal) result).doubleValue();
+                } else if (result instanceof Double) {
+                    totalRevenue = (Double) result;
+                } else if (result instanceof Number) {
+                    totalRevenue = ((Number) result).doubleValue();
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            if (session != null) {
+                session.close();
+            }
+        }
+        return totalRevenue;
     }
 }

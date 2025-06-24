@@ -37,8 +37,8 @@ public class RevenueController {
         long totalCustomers = customerService.count();
         long totalProducts = productService.count();
         long totalInvoices = invoiceService.count();
-//        BigDecimal totalRevenue = invoiceService.getTotalRevenue();
-//        model.addAttribute("totalRevenue", totalRevenue);
+        BigDecimal totalRevenue = BigDecimal.valueOf(invoiceService.totalRevenue());
+        model.addAttribute("totalRevenue", totalRevenue);
 
         List<Customer> customers = customerService.findByFilter(null, null, null, 1, 5);
         model.addAttribute("customers", customers);
